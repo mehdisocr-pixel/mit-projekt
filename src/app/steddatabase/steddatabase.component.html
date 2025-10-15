@@ -1,0 +1,114 @@
+<app-dropdown-steddatabase (bulkCreate)="openBulkModal()"></app-dropdown-steddatabase>
+<div class="locationdb-root">
+  <div class="locationdb-sidebar">
+    <h2>Opret nyt sted</h2>
+    <label>Sted (eks: 6013 Led og Knogle leje 101):</label>
+    <input type="text" [(ngModel)]="newSted" />
+    <button (click)="opretSted()">Opret</button>
+  </div>
+  <div class="locationdb-content">
+
+    <!-- SØGEFELT OG TÆLLER -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.1rem;">
+      <input
+        type="text"
+        [(ngModel)]="searchText"
+        placeholder="Søg i alle kolonner..."
+        style="padding: 0.56rem; border-radius: 7px; border: none; min-width: 300px; font-size:1.02rem;"
+      />
+      <span style="font-size: 1.08em; color: #85b6ff; margin-left: 1rem;">
+        Viser {{ shownRows }} af {{ totalRows }} steder
+      </span>
+    </div>
+
+    <div *ngIf="isLoading" style="margin:1.2rem 0; color:#85b6ff;">
+      <span class="loader"></span> Indlæser data...
+    </div>
+    <div *ngIf="errorMsg" style="margin:1.2rem 0; color:#ff4d4d;">
+      {{ errorMsg }}
+    </div>
+
+    <table>
+      <thead class="sticky-thead">
+        <tr>
+          <th>#</th>
+          <th (click)="sortBy('Sted')" style="cursor:pointer;">Sted {{sortIcon('Sted')}}</th>
+          <th (click)="sortBy('Afsnitsnr')" style="cursor:pointer;">Afsnitsnr {{sortIcon('Afsnitsnr')}}</th>
+          <th (click)="sortBy('AfsnitsnavnRumnavn')" style="cursor:pointer;">
+            Afsnitsnavn og/eller rumnavn {{sortIcon('AfsnitsnavnRumnavn')}}
+          </th>
+          <th (click)="sortBy('Opgang')" style="cursor:pointer;">Opgang {{sortIcon('Opgang')}}</th>
+          <th (click)="sortBy('Etage')" style="cursor:pointer;">Etage {{sortIcon('Etage')}}</th>
+          <th (click)="sortBy('Afsnit')" style="cursor:pointer;">Afsnit {{sortIcon('Afsnit')}}</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of filteredRows; let i = index"
+            (mouseenter)="hoveredRow = row"
+            (mouseleave)="hoveredRow = null"
+            [class.row-highlight]="hoveredRow === row">
+          <td>{{i+1}}</td>
+          <td>{{ row['Sted'] }}</td>
+          <td>{{ row['Afsnitsnr'] }}</td>
+          <td>{{ row['AfsnitsnavnRumnavn'] }}</td>
+          <td>{{ row['Opgang'] }}</td>
+          <td>{{ row['Etage'] }}</td>
+          <td>{{ row['Afsnit'] }}</td>
+          <td style="width:60px; display:flex; align-items:center;">
+            <span *ngIf="hoveredRow === row" (click)="editRow(row)" class="edit-icon" title="Rediger">&#9998;</span>
+            <span *ngIf="hoveredRow === row" (click)="confirmDeleteRow(row)" class="delete-icon" title="Slet">
+              <svg height="18" viewBox="0 0 24 24" width="18" style="vertical-align:middle">
+                <path fill="currentColor" d="M6 19a2 2 0 002 2h8a2 2 0 002-2V7H6v12zm3.5-9h1v7h-1V10zm3 0h1v7h-1V10z"/>
+                <path fill="currentColor" d="M15.5 4l-1-1h-5l-1 1H5v2h14V4z"/>
+              </svg>
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Rediger-dialog -->
+  <div class="modal-backdrop" *ngIf="editingRow">
+    <div class="modal-content">
+      <h3>Rediger sted</h3>
+      <label>Sted:</label>
+      <input type="text" [(ngModel)]="editingRow['Sted']" />
+      <button (click)="saveEdit()">Gem</button>
+      <button (click)="cancelEdit()">Annuller</button>
+    </div>
+  </div>
+
+  <!-- Slet-dialog -->
+  <div class="modal-backdrop" *ngIf="rowToDelete">
+    <div class="modal-content">
+      <h3>Bekræft sletning</h3>
+      <p>Er du sikker på, at du vil slette dette sted?</p>
+      <div style="margin-bottom:1.2rem; opacity:0.7;">
+        <div><b>Sted:</b> {{rowToDelete['Sted']}}</div>
+      </div>
+      <button (click)="deleteRowConfirmed()" style="background:#e53935; color:#fff; margin-right:16px; border:none; border-radius:7px; padding:0.7rem 2.1rem; font-size:1.05rem; cursor:pointer;">Slet</button>
+      <button (click)="cancelDelete()" style="background:#232b3e; color:#85b6ff; border:none; border-radius:7px; padding:0.7rem 2.1rem; font-size:1.05rem; cursor:pointer;">Fortryd</button>
+    </div>
+  </div>
+
+  <!-- Bulk Modal -->
+  <div class="modal-backdrop" *ngIf="showBulkModal">
+    <div class="modal-content">
+      <h3>Opret flere sted (en per linje)</h3>
+      <div style="margin-bottom: 1rem; font-size: 0.97em; color: #85b6ff;">
+        Indsæt én sted pr. linje, fx:<br>
+        <span style="color:#aaa;">6013 Led og Knogle leje 101</span>
+      </div>
+      <textarea [(ngModel)]="bulkText" rows="8" style="width:100%; border-radius:7px; padding:0.8rem; border:none;"></textarea>
+      <div style="margin-top: 1rem;">
+        <button (click)="bulkOpretSted()" [disabled]="bulkInProgress" style="background:#2196f3; color:#fff; border:none; border-radius:7px; padding:0.7rem 2.1rem; font-size:1.07rem; margin-right:16px;">
+          Opret
+        </button>
+        <button (click)="showBulkModal = false" style="background:#232b3e; color:#85b6ff; border:none; border-radius:7px; padding:0.7rem 2.1rem; font-size:1.07rem;">Fortryd</button>
+      </div>
+      <div *ngIf="bulkMsg" style="margin-top:1rem; color:#3ec6ff; font-size:1em;">{{ bulkMsg }}</div>
+    </div>
+  </div>
+</div>

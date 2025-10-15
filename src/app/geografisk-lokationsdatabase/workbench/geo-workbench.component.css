@@ -1,0 +1,65 @@
+:host { display:block; height:100%; }
+
+.geo-shell {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+
+/* Topbar */
+.geo-toolbar {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .5rem .75rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f8fafc;
+}
+.geo-toolbar .title { font-weight: 600; }
+.geo-toolbar .spacer { flex: 1; }
+.btn { background:#3b82f6; color:#fff; border:none; border-radius:6px; padding:.4rem .6rem; cursor:pointer; }
+.btn:hover { filter:brightness(1.05); }
+.btn.btn-secondary { background:#6b7280; }
+.btn.primary { background:#2563eb; }
+
+/* Hovedlayout: brug FLEX i stedet for grid for at undgå sammenpresning */
+.geo-main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+/* Venstre panel med formularer */
+.geo-left {
+  flex: 0 0 340px;         /* <<< fast bredde så den ikke kollapser */
+  max-width: 420px;
+  border-right: 1px solid #e5e7eb;
+  padding: .75rem;
+  overflow: auto;
+  background: #ffffff;
+  z-index: 2;
+}
+
+.form { display: grid; gap:.6rem; }
+.form h3 { margin: .25rem 0 .5rem; }
+label { display: grid; gap:.25rem; font-size:.95rem; }
+input, select, textarea {
+  font: inherit;
+  padding: .45rem .55rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+}
+.req { color:#ef4444; margin-left:.2rem; }
+.hint { font-size:.85rem; color:#6b7280; }
+.mini-hint { margin-top: .6rem; font-size:.8rem; color:#6b7280; }
+.row { display:flex; gap:.5rem; }
+
+.placeholder { color:#6b7280; font-size:.95rem; }
+
+/* Kort */
+.geo-map {
+  flex: 1 1 auto;          /* udfyld resten */
+  min-width: 0;            /* tillad at krympe rigtigt i flex-layouts */
+  height: 100%;
+}

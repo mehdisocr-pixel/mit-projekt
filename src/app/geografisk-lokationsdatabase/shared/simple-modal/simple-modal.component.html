@@ -1,0 +1,6 @@
+<div class="modal-backdrop" (click)="onBackdropClick($event)">
+  <div class="modal-card">
+    <button class="modal-close" (click)="closed.emit()" aria-label="Luk">×</button>
+    <ng-container *ngComponentOutlet="component; inputs: inputs"></ng-container>
+  </div>
+</div>

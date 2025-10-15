@@ -1,0 +1,54 @@
+/* FULD SKÆRM LAYOUT */
+html, body, app-root { height: 100%; }
+.layout {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 340px 1fr; /* venstre panel + kort */
+}
+
+/* Venstre panel */
+.panel {
+  background: #f8f9fb;
+  border-right: 1px solid #e6e9ef;
+  padding: 16px;
+  overflow: auto;
+}
+.panel h2 { margin: 0 0 12px; }
+
+.form { display: grid; gap: 10px; }
+label { display: grid; gap: 6px; font-weight: 600; }
+input, select, textarea {
+  font: inherit;
+  padding: .5rem .6rem;
+  border: 1px solid #cfd6e4;
+  border-radius: 6px;
+  background: #fff;
+}
+.req { color: #c62828; }
+
+.hint {
+  margin: 8px 0 4px;
+  font-size: .9rem;
+  color: #444;
+}
+
+.actions { margin-top: 6px; }
+.actions button {
+  padding: .55rem .9rem;
+  border: 1px solid #cfd6e4;
+  border-radius: 8px;
+  background: #2f7ae5;
+  color: #fff;
+  cursor: pointer;
+}
+.actions button:hover { filter: brightness(.95); }
+
+/* Kortet fylder resten */
+.map {
+  height: 100vh;
+  width: 100%;
+}
+
+/* FIX mod “fragmenteret” kort hvis du også har global img-styling */
+.leaflet-container img { max-width: none !important; }

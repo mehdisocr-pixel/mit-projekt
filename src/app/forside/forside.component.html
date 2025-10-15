@@ -1,0 +1,115 @@
+<!-- ========================================================== -->
+<!-- ===         FINAL forside.component.html               === -->
+<!-- ========================================================== -->
+
+<!-- Ny container for at placere dropdown og knap korrekt -->
+<div class="top-bar-container">
+  <app-dropdown-forside
+    (gotoForside)="onGotoForside()"
+    (gotoLocationDb)="onGotoLocationDb()"
+    (openColumnModal)="openColumnModal()"
+  ></app-dropdown-forside>
+
+  <button
+    class="fab-opret"
+    (click)="openOpgaveModal()"
+    title="Opret opgave"
+    aria-label="Opret ny opgave"
+  >
+    <span>&#43;</span>
+  </button>
+</div>
+
+<!-- Præcis den samme struktur som i din gamle fil for at bevare layoutet -->
+<div class="forside-container">
+  <h2>Koordinatorskærm</h2>
+  <div style="text-align:center; margin-bottom: 2rem;">
+    <!-- Beholder din gamle inline-style for at matche dit ønskede design 100% -->
+    <input
+      type="text"
+      [(ngModel)]="filterText"
+      placeholder="Søg i opgaver (fx vognnummer, startsted...)"
+      style="padding: 0.5rem; font-size: 1rem; border-radius: 6px; border: none; min-width: 300px;"
+    />
+  </div>
+
+  <div class="cards">
+    <div class="card" *ngFor="let row of filteredData">
+      <ng-container *ngFor="let col of columnsToShow">
+        <div><strong>{{ col }}:</strong> {{ row[col] }}</div>
+      </ng-container>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL TIL VALG AF KOLONNER (fra din gamle fil) -->
+<div *ngIf="showColumnModal" class="modal-backdrop">
+  <div class="modal-content">
+    <h3>Vælg hvilke tabelkolonner der skal vises</h3>
+    <div class="modal-columns">
+      <button
+        type="button"
+        class="modal-col-option"
+        *ngFor="let col of tableColumns"
+        (click)="toggleColumn(col)">
+        <span>{{ col }}</span>
+        <span class="checkmark" *ngIf="selectedColumns.includes(col)">&#10003;</span>
+      </button>
+    </div>
+    <button class="modal-ok-btn" (click)="closeColumnModal()">OK</button>
+  </div>
+</div>
+
+<!-- MODAL TIL OPRET OPGAVE (ny funktionalitet) -->
+<div *ngIf="showOpgaveModal" class="modal-backdrop" (click)="closeOpgaveModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h3>Opret ny opgave</h3>
+    <div class="opret-opgave-form">
+      <label>
+        <span>Destination:</span>
+        <input
+          type="text"
+          [(ngModel)]="destinationSearch"
+          (focus)="valgtDestination=''"
+          placeholder="Vælg eller skriv destination..."
+          autocomplete="off"
+        />
+      </label>
+      <div class="opret-dropdown-list" *ngIf="destinationSearch && !valgtDestination">
+        <button
+          type="button"
+          class="opret-dropdown-item"
+          *ngFor="let sted of filteredSteder"
+          (click)="vaelgDestination(sted)">
+          {{ sted }}
+        </button>
+      </div>
+      <label>
+        <span>Opgave:</span>
+        <input
+          type="text"
+          [(ngModel)]="opgaveSearch"
+          (focus)="valgtOpgave=''"
+          placeholder="Vælg eller skriv opgavetype..."
+          autocomplete="off"
+        />
+      </label>
+      <div class="opret-dropdown-list" *ngIf="opgaveSearch && !valgtOpgave">
+        <button
+          type="button"
+          class="opret-dropdown-item"
+          *ngFor="let opgave of filteredOpgaver"
+          (click)="vaelgOpgave(opgave)">
+          {{ opgave }}
+        </button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button (click)="closeOpgaveModal()" class="button-secondary">Fortryd</button>
+      <button
+        (click)="opretOpgave()"
+        [disabled]="!valgtDestination || !valgtOpgave"
+      >Opret</button>
+    </div>
+  </div>
+</div>

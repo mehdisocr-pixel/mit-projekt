@@ -1,0 +1,4 @@
+.dropdown-root { }
+.dropdown-menu { background: #232b3e; color: #fff; border-radius: 8px; padding: 0.7rem 0.5rem; }
+.dropdown-option { padding: 0.7rem 1.1rem; cursor: pointer; }
+.dropdown-option:hover { background: #2196f3; color: #fff; }

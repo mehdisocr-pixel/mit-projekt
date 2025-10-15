@@ -1,0 +1,133 @@
+<div class="geo-shell">
+  <header class="geo-toolbar">
+    <div class="title">Geografisk lokationsdatabase</div>
+    <div class="spacer"></div>
+    <button class="btn" (click)="openForm('hospital')">+ Opret hospital</button>
+    <button class="btn" (click)="openForm('building')">+ Opret bygning</button>
+    <button class="btn" (click)="openForm('section')">+ Opret afsnit</button>
+  </header>
+
+  <div class="geo-main">
+    <aside class="geo-left">
+      <!-- Formularer -->
+      <ng-container [ngSwitch]="activeForm">
+        <form *ngSwitchCase="'hospital'" [formGroup]="hospitalForm" (ngSubmit)="saveHospital()" class="form">
+          <h3>Opret hospital</h3>
+          <label>Navn
+            <input formControlName="name" type="text" placeholder="Rigshospitalet">
+          </label>
+          <div class="hint">Tegn polygon på kortet.</div>
+          <div class="row">
+            <button type="button" class="btn btn-secondary" (click)="startPolygon()">Tegn polygon</button>
+          </div>
+          <button type="submit" class="btn primary">Gem hospital</button>
+        </form>
+
+        <form *ngSwitchCase="'building'" [formGroup]="buildingForm" (ngSubmit)="saveBuilding()" class="form">
+          <h3>Opret bygning</h3>
+
+          <!-- Opgang fra datakilde -->
+          <label>Opgang (fra datakilde) <span class="req">*</span>
+            <select formControlName="opgang">
+              <option [ngValue]="''" disabled>Vælg opgang...</option>
+              <option *ngFor="let o of uniqueOpgange" [ngValue]="o">{{ o }}</option>
+            </select>
+          </label>
+
+          <label>Navn (valgfri)
+            <input formControlName="name" type="text" placeholder="Bygning 12A (overskrives af opgang ved gem)">
+          </label>
+
+          <label>Antal etager <span class="req">*</span>
+            <input formControlName="floors" type="number" min="1" placeholder="fx 5">
+          </label>
+
+          <div class="hint">Tegn polygon på kortet.</div>
+          <div class="row">
+            <button type="button" class="btn btn-secondary" (click)="startPolygon()">Tegn polygon</button>
+          </div>
+          <button type="submit" class="btn primary">Gem bygning</button>
+        </form>
+
+        <form *ngSwitchCase="'section'" [formGroup]="sectionForm" (ngSubmit)="saveSection()" class="form">
+          <h3>Opret afsnit</h3>
+          <label>Afsnit <span class="req">*</span>
+            <input formControlName="afsnit" type="text" placeholder="fx 6013">
+          </label>
+          <label>Etage
+            <select formControlName="etage">
+              <option *ngFor="let e of etager" [ngValue]="e.value">{{ e.label }}</option>
+            </select>
+          </label>
+          <label>Bygning <span class="req">*</span>
+            <select formControlName="buildingId">
+              <option [ngValue]="''" disabled>Vælg bygning...</option>
+              <option *ngFor="let b of (buildings$ | async)" [ngValue]="b.id">{{ b.name || b.id }}</option>
+            </select>
+          </label>
+          <label>Beskrivelse (valgfri)
+            <textarea rows="3" formControlName="description" placeholder="Noter..."></textarea>
+          </label>
+          <div class="hint">Placer en markør på kortet.</div>
+          <div class="row">
+            <button type="button" class="btn btn-secondary" (click)="startMarker()">Placer markør</button>
+          </div>
+          <button type="submit" class="btn primary">Gem afsnit</button>
+        </form>
+
+        <div *ngSwitchDefault class="placeholder">
+          {{ hint }}
+        </div>
+      </ng-container>
+
+      <!-- Inspektionspanel (vises når man klikker på en bygningspolygon) -->
+      <ng-container *ngIf="!activeForm && selectedOpgang">
+        <div class="form">
+          <h3>Bygning / opgang: {{ selectedOpgang }}</h3>
+
+          <div *ngIf="floorsForSelected?.length; else noFloors" style="margin:.5rem 0 1rem;">
+            <div style="display:flex; flex-wrap:wrap; gap:.35rem;">
+              <button
+                *ngFor="let f of floorsForSelected"
+                type="button"
+                class="btn"
+                [class.primary]="f === currentFloor"
+                (click)="selectFloor(f)">
+                {{ f }}
+              </button>
+            </div>
+          </div>
+          <ng-template #noFloors>
+            <div class="hint">Ingen etager fundet i datakilden.</div>
+          </ng-template>
+
+          <div *ngIf="rowsOnCurrentFloor.length; else noRows">
+            <div *ngFor="let r of rowsOnCurrentFloor" class="row"
+                 style="justify-content:space-between; align-items:center; border:1px solid #eee; border-radius:8px; padding:.4rem .6rem; margin-bottom:.4rem;">
+              <div>
+                <div style="font-weight:600">{{ r.Afsnitsnr }}</div>
+                <div style="opacity:.8">{{ r.AfsnitsnavnRumnavn }}</div>
+              </div>
+              <button type="button" class="btn btn-secondary" (click)="openRowDetails(r)">Detaljer</button>
+            </div>
+          </div>
+          <ng-template #noRows>
+            <div class="hint">Ingen afsnit på denne etage.</div>
+          </ng-template>
+        </div>
+      </ng-container>
+
+      <p class="mini-hint">{{ hint }}</p>
+    </aside>
+
+    <div id="geo-map" class="geo-map" aria-label="Kort"></div>
+  </div>
+</div>
+
+<!-- Modal til detaljer -->
+<app-detail-modal
+  *ngIf="showModal"
+  [title]="modalTitle"
+  [data]="modalData"
+  (closed)="closeModal()">
+</app-detail-modal>

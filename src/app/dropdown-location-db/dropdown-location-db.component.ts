@@ -1,0 +1,53 @@
+import { Component, HostListener, Output, EventEmitter } from '@angular/core';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+
+@Component({
+  selector: 'app-dropdown-location-db',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './dropdown-location-db.component.html',
+  styleUrls: ['./dropdown-location-db.component.css']
+})
+export class DropdownLocationDbComponent {
+  showDropdown = false;
+
+  @Output() bulkCreate = new EventEmitter<void>();
+
+  constructor(public router: Router) {}
+
+  toggleDropdown(event: MouseEvent) {
+    event.stopPropagation();
+    this.showDropdown = !this.showDropdown;
+  }
+
+  goToForside() {
+    this.showDropdown = false;
+    this.router.navigate(['/']);
+  }
+  goToLocationDb() {
+    this.showDropdown = false;
+    this.router.navigate(['/location-db']);
+  }
+  goToSteddatabase() {
+    this.showDropdown = false;
+    this.router.navigate(['/steddatabase']);
+  }
+  goToOpgavetyper() {
+    this.showDropdown = false;
+    this.router.navigate(['/opgavetyper']);
+  }
+  goToGeoWorkbench() {
+    this.showDropdown = false;
+    this.router.navigate(['/geografisk-lokationsdatabase']);
+  }
+  openBulkModal() {
+    this.showDropdown = false;
+    this.bulkCreate.emit();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocClick(event: Event) {
+    if (this.showDropdown) this.showDropdown = false;
+  }
+}

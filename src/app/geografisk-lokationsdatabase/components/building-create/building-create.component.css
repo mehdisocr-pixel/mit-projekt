@@ -1,0 +1,7 @@
+.layout { position: fixed; inset: 0; display: grid; grid-template-columns: 320px 1fr; }
+.panel { background: #f8f9fb; border-right: 1px solid #e6e9ef; padding: 14px; overflow: auto; }
+.form { display: grid; gap: 10px; }
+input { font: inherit; padding: .5rem .6rem; border: 1px solid #cfd6e4; border-radius: 6px; }
+button { padding: .55rem .9rem; border: 1px solid #cfd6e4; border-radius: 8px; background: #2f7ae5; color:#fff; cursor:pointer; }
+.map { height: 100vh; width: 100%; }
+.leaflet-container img { max-width: none !important; }

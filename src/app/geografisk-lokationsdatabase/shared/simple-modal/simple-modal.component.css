@@ -1,0 +1,28 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(19, 25, 40, 0.58);
+  display: grid;
+  place-items: center;
+  z-index: 2000;
+}
+.modal-card {
+  background: #fff;
+  width: min(1100px, 94vw);
+  max-height: 90vh;
+  border-radius: 14px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.35);
+  overflow: hidden;
+  position: relative;
+}
+.modal-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  border: none;
+  background: transparent;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  color: #23324d;
+}

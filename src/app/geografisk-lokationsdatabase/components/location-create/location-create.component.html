@@ -1,0 +1,46 @@
+<div class="layout">
+  <!-- Sidepanel (venstre boks) -->
+  <aside class="panel">
+    <h2>Opret bygning</h2>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+      <label>
+        Navn (valgfri)
+        <input type="text" formControlName="name" placeholder="F.eks. Bygning 12A" />
+      </label>
+
+      <label>
+        Afsnit <span class="req">*</span>
+        <input type="text" formControlName="afsnit" placeholder="F.eks. Afsnit 6013" />
+      </label>
+
+      <label>
+        Etage
+        <select formControlName="etage">
+          <option *ngFor="let e of etageOptions" [ngValue]="e.value">{{ e.label }}</option>
+        </select>
+      </label>
+
+      <label>
+        Beskrivelse (valgfri)
+        <textarea rows="3" formControlName="description" placeholder="Noter..."></textarea>
+      </label>
+
+      <div class="hint">
+        <strong>Tegn polygon</strong>: Brug værktøjsbjælken på kortet (øverst til venstre) til at markere bygningen.
+      </div>
+
+      <div class="actions">
+        <button type="submit">Gem bygning</button>
+      </div>
+    </form>
+
+    <div class="geom">
+      <strong>Geometry:</strong>
+      <pre>{{ form.value.geometry || '(ingen polygon endnu)' | json }}</pre>
+    </div>
+  </aside>
+
+  <!-- Fuldskærmskort -->
+  <div id="map" class="map"></div>
+</div>

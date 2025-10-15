@@ -1,0 +1,21 @@
+<!-- Toolbar -->
+<app-geo-actions
+  (createBuilding)="router.navigate(['/geografisk-lokationsdatabase/building/create'])"
+  (createSection)="router.navigate(['/geografisk-lokationsdatabase/section/create'])">
+</app-geo-actions>
+
+<div class="layout">
+  <aside class="panel">
+    <h2>Opret bygning</h2>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+      <label>Navn (valgfri)
+        <input type="text" formControlName="name" placeholder="F.eks. Bygning 12A">
+      </label>
+      <div class="hint">Tegn polygon på kortet (venstre værktøjsbjælke).</div>
+      <div class="actions">
+        <button type="submit">Gem bygning</button>
+      </div>
+    </form>
+  </aside>
+  <div id="map-building" class="map"></div>
+</div>

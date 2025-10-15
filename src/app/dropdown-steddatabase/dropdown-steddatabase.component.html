@@ -1,0 +1,10 @@
+<div class="dropdown-root" style="position: absolute; top: 16px; left: 16px; z-index: 1000;">
+  <div (click)="toggleDropdown($event)" style="cursor:pointer; display: flex; align-items: center;">
+    <span style="font-size: 2rem; color: #fff;">&#9776;</span>
+  </div>
+  <div *ngIf="showDropdown" class="dropdown-menu" (click)="$event.stopPropagation()">
+    <div *ngIf="router.url !== '/'" (click)="goToForside()" class="dropdown-option">Koordinatorskærm</div>
+    <div *ngIf="router.url !== '/location-db'" (click)="goToLocationDb()" class="dropdown-option">AP lokationsdatabase</div>
+    <div (click)="openBulkModal()" class="dropdown-option">Opret flere</div>
+  </div>
+</div>

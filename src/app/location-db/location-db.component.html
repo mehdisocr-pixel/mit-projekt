@@ -1,0 +1,135 @@
+<app-dropdown-location-db (bulkCreate)="openBulkModal()"></app-dropdown-location-db>
+<div class="locationdb-root">
+  <div class="locationdb-sidebar">
+    <h2>Opret ny AP lokation</h2>
+    <label>AP navn:</label>
+    <input type="text" [(ngModel)]="newApNavn" />
+    <label>Mac adresse:</label>
+    <input type="text" [(ngModel)]="newMac" />
+    <label>Lokation:</label>
+    <input type="text" [(ngModel)]="newLocation" />
+    <button (click)="opretLokation()">Opret</button>
+  </div>
+  <div class="locationdb-content">
+
+    <!-- Soeg & taeller -->
+    <div class="locationdb-toolbar">
+      <input
+        class="locationdb-search"
+        type="text"
+        [(ngModel)]="searchText"
+        placeholder="S&oslash;g i alle kolonner..."
+      />
+      <span class="locationdb-counter">
+        Viser {{ shownRows }} af {{ totalRows }} lokationer
+      </span>
+    </div>
+
+    <!-- Loader / fejl -->
+    <div *ngIf="isLoading" class="locationdb-status locationdb-status--loading">
+      <span class="loader"></span> Indl&aelig;ser data...
+    </div>
+    <div *ngIf="errorMsg" class="locationdb-status locationdb-status--error">
+      {{ errorMsg }}
+    </div>
+
+    <!-- Table -->
+    <div class="locationdb-table-wrapper">
+      <table>
+        <thead class="sticky-thead">
+          <tr>
+            <th>#</th>
+            <th (click)="sortBy('Oprettet')" class="sortable">
+              Oprettet {{ sortIcon('Oprettet') }}
+            </th>
+            <th (click)="sortBy('AP navn')" class="sortable">
+              AP navn {{ sortIcon('AP navn') }}
+            </th>
+            <th (click)="sortBy('Mac adresse')" class="sortable">
+              Mac adresse {{ sortIcon('Mac adresse') }}
+            </th>
+            <th (click)="sortBy('Lokation')" class="sortable">
+              Lokation {{ sortIcon('Lokation') }}
+            </th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of filteredRows; let i = index"
+              (mouseenter)="hoveredRow = row"
+              (mouseleave)="hoveredRow = null"
+              [class.row-highlight]="hoveredRow === row">
+            <td>{{ i + 1 }}</td>
+            <td>{{ row['Oprettet'] }}</td>
+            <td>{{ row['AP navn'] }}</td>
+            <td>{{ row['Mac adresse'] }}</td>
+            <td>{{ row['Lokation'] }}</td>
+            <td class="action-cell">
+              <span *ngIf="hoveredRow === row" (click)="editRow(row)" class="edit-icon" title="Rediger">&#9998;</span>
+              <span *ngIf="hoveredRow === row" (click)="confirmDeleteRow(row)" class="delete-icon" title="Slet">
+                <svg height="18" viewBox="0 0 24 24" width="18" style="vertical-align:middle">
+                  <path fill="currentColor" d="M6 19a2 2 0 002 2h8a2 2 0 002-2V7H6v12zm3.5-9h1v7h-1V10zm3 0h1v7h-1V10z" />
+                  <path fill="currentColor" d="M15.5 4l-1-1h-5l-1 1H5v2h14V4z" />
+                </svg>
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Redigerings-dialog -->
+  <div class="modal-backdrop" *ngIf="editingRow">
+    <div class="modal-content">
+      <h3>Rediger lokation</h3>
+      <label>AP navn:</label>
+      <input type="text" [(ngModel)]="editingRow['AP navn']" />
+      <label>Mac adresse:</label>
+      <input type="text" [(ngModel)]="editingRow['Mac adresse']" />
+      <label>Lokation:</label>
+      <input type="text" [(ngModel)]="editingRow['Lokation']" />
+      <button (click)="saveEdit()">Gem</button>
+      <button (click)="cancelEdit()">Annuller</button>
+    </div>
+  </div>
+
+  <!-- Slet-dialog -->
+  <div class="modal-backdrop" *ngIf="rowToDelete">
+    <div class="modal-content">
+      <h3>Bekr&aelig;ft sletning</h3>
+      <p>Er du sikker p&aring;, at du vil slette denne lokation?</p>
+      <div style="margin-bottom:1.2rem; opacity:0.7;">
+        <div><b>Oprettet:</b> {{ rowToDelete['Oprettet'] }}</div>
+        <div><b>AP navn:</b> {{ rowToDelete['AP navn'] }}</div>
+        <div><b>Mac adresse:</b> {{ rowToDelete['Mac adresse'] }}</div>
+        <div><b>Lokation:</b> {{ rowToDelete['Lokation'] }}</div>
+      </div>
+      <button (click)="deleteRowConfirmed()" style="background:#e53935; color:#fff; margin-right:16px; border:none; border-radius:7px; padding:0.7rem 2.1rem; font-size:1.05rem; cursor:pointer;">Slet</button>
+      <button (click)="cancelDelete()" style="background:#232b3e; color:#85b6ff; border:none; border-radius:7px; padding:0.7rem 2.1rem; font-size:1.05rem; cursor:pointer;">Fortryd</button>
+    </div>
+  </div>
+
+  <!-- Bulk AP Modal -->
+  <div class="modal-backdrop" *ngIf="showBulkModal">
+    <div class="modal-content">
+      <h3>Opret flere AP (en per linje)</h3>
+      <div style="margin-bottom: 1rem; font-size: 0.97em; color: #85b6ff;">
+        Inds&aelig;t eller kopier <b>AP navn, Mac adresse, Lokation</b> for hver linje.<br>
+        Separator: <i>tab</i>, <i>komma</i> eller <i>semikolon</i>.<br>
+        Eksempel:<br>
+        <span style="color:#aaa; font-size:0.96em;">AP1[TAB]AA:BB:CC:DD:EE:FF[TAB]Depot X</span>
+      </div>
+      <textarea [(ngModel)]="bulkText" rows="8" style="width:100%; border-radius:7px; padding:0.8rem; border:none;"></textarea>
+      <div style="margin-top: 1rem;">
+        <button (click)="bulkOpretAP()" [disabled]="bulkInProgress" style="background:#2196f3; color:#fff; border:none; border-radius:7px; padding:0.7rem 2.1rem; font-size:1.07rem; cursor:pointer; margin-right:16px;">
+          Opret
+        </button>
+        <button (click)="showBulkModal = false" style="background:#232b3e; color:#85b6ff; border:none; border-radius:7px; padding:0.7rem 2.1rem; font-size:1.07rem; cursor:pointer;">
+          Fortryd
+        </button>
+      </div>
+      <div *ngIf="bulkMsg" style="margin-top:1rem; color:#3ec6ff; font-size:1em;">{{ bulkMsg }}</div>
+    </div>
+  </div>
+</div>

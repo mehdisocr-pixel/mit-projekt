@@ -1,0 +1,21 @@
+/* --- GLOBAL HØJDE, så rute-komponenter kan fylde skærmen --- */
+html, body {
+  height: 100%;
+}
+body {
+  margin: 0;
+}
+app-root {
+  display: block;
+  height: 100%;
+}
+
+/* Leaflet: lad Leaflet selv styre billedstørrelser */
+.leaflet-container img { 
+  max-width: none !important;
+}
+
+/* Nulstil font i Leaflet så UI matcher app'en */
+.leaflet-container { 
+  font: inherit; 
+}

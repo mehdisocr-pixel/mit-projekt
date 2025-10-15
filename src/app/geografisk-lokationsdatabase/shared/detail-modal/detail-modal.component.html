@@ -1,0 +1,16 @@
+<div class="modal-backdrop" (click)="onBackdrop($event)">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">{{ title }}</div>
+      <button class="x" (click)="closed.emit()" aria-label="Luk">×</button>
+    </div>
+
+    <div class="modal-body" *ngIf="data">
+      <!-- Brug keyvalue-pipen i stedet for Object.keys(...) -->
+      <div class="row" *ngFor="let kv of data | keyvalue">
+        <div class="k">{{ kv.key }}</div>
+        <div class="v">{{ kv.value }}</div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,25 @@
+<div class="dropdown-root">
+  <div class="hamburger" (click)="toggleDropdown($event)" aria-label="Menu" title="Menu">&#9776;</div>
+
+  <div *ngIf="showDropdown" class="dropdown-menu" (click)="$event.stopPropagation()">
+    <div *ngIf="router.url !== '/'" class="dropdown-option" (click)="goToForside()">Forside</div>
+    <div *ngIf="router.url !== '/location-db'" class="dropdown-option" (click)="goToLocationDb()">AP lokationsdatabase</div>
+    <div *ngIf="router.url !== '/steddatabase'" class="dropdown-option" (click)="goToSteddatabase()">Steddatabase</div>
+    <div *ngIf="router.url !== '/opgavetyper'" class="dropdown-option" (click)="goToOpgavetyper()">Opgavetyper</div>
+
+    <hr class="sep" />
+
+    <!-- Det ENESTE geo-relaterede menupunkt -->
+    <div *ngIf="router.url !== '/geografisk-lokationsdatabase'"
+         class="dropdown-option"
+         (click)="goToGeoWorkbench()">
+      Geografisk lokationsdatabase
+    </div>
+
+    <hr class="sep" />
+
+    <div class="dropdown-option" (click)="handleOpenColumnModal($event)">
+      Vælg tabelkolonner
+    </div>
+  </div>
+</div>

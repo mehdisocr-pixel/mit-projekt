@@ -1,0 +1,34 @@
+<!-- Toolbar -->
+<app-geo-actions
+  (createBuilding)="router.navigate(['/geografisk-lokationsdatabase/building/create'])"
+  (createSection)="router.navigate(['/geografisk-lokationsdatabase/section/create'])">
+</app-geo-actions>
+
+<div class="page">
+  <h2>Opret afsnit + etage</h2>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+    <label>Afsnit <span class="req">*</span>
+      <input type="text" formControlName="afsnit" placeholder="fx 6013">
+    </label>
+
+    <label>Etage
+      <select formControlName="etage">
+        <option *ngFor="let e of etager" [ngValue]="e.value">{{ e.label }}</option>
+      </select>
+    </label>
+
+    <label>Bygning <span class="req">*</span>
+      <select formControlName="buildingId">
+        <option [ngValue]="''" disabled>Vælg bygning...</option>
+        <option *ngFor="let b of (buildings$ | async)" [ngValue]="b.id">{{ b.name || b.id }}</option>
+      </select>
+    </label>
+
+    <label>Beskrivelse (valgfri)
+      <textarea rows="3" formControlName="description" placeholder="Noter..."></textarea>
+    </label>
+
+    <button type="submit">Gem afsnit</button>
+  </form>
+</div>

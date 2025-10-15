@@ -1,0 +1,132 @@
+body {
+  background: #111 !important;
+}
+
+.container {
+  background: #111;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+h2 {
+  color: #fff;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.card {
+  background: #2196f3;
+  color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  padding: 1.5rem;
+  min-width: 300px;
+  max-width: 350px;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  word-break: break-word;
+  transition: transform 0.15s;
+}
+.card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 8px 32px rgba(33,150,243,0.3);
+}
+strong {
+  color: #fff;
+}
+
+/* Dropdown-menu */
+.dropdown-menu {
+  background: #222;
+  color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  margin-top: 8px;
+  min-width: 180px;
+  font-size: 1.05rem;
+  position: absolute;
+  left: 0;
+  padding: 0.6rem 0;
+  z-index: 1001;
+}
+.dropdown-option {
+  padding: 0.6rem 1.2rem;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.dropdown-option:hover {
+  background: #28425B;
+}
+
+/* Modal baggrund */
+.modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(10, 18, 33, 0.83);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+/* Modal indhold */
+.modal-content {
+  background: #232f3e;
+  border-radius: 14px;
+  color: #fff;
+  box-shadow: 0 8px 32px rgba(33,150,243,0.2);
+  min-width: 320px;
+  max-width: 90vw;
+  padding: 2.2rem 1.7rem 1.7rem 1.7rem;
+  text-align: center;
+}
+
+.modal-columns {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 2rem 0 1rem 0;
+  min-width: 180px;
+}
+.modal-col-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 0.4rem 0.7rem;
+  border-radius: 7px;
+  font-size: 1.13rem;
+  transition: background 0.15s;
+}
+.modal-col-option:hover {
+  background: #173456;
+}
+
+.checkmark {
+  margin-left: 16px;
+  color: #fff;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+/* Modal OK-knap */
+.modal-ok-btn {
+  margin-top: 1.5rem;
+  background: #2196f3;
+  color: #fff;
+  font-size: 1.12rem;
+  border: none;
+  border-radius: 7px;
+  padding: 0.6rem 2.3rem;
+  cursor: pointer;
+  transition: background 0.13s;
+}
+.modal-ok-btn:hover {
+  background: #1769aa;
+}
