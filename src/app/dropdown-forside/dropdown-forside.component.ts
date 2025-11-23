@@ -25,6 +25,7 @@ export class DropdownForsideComponent {
   goToLocationDb()     { this.closeAnd('/location-db'); }
   goToSteddatabase()   { this.closeAnd('/steddatabase'); }
   goToOpgavetyper()    { this.closeAnd('/opgavetyper'); }
+  goToRegionhTracker() { this.closeAnd('/regionh-tracker'); }
 
   // ENESTE geo-punkt vi beholder
   goToGeoWorkbench()   { this.closeAnd('/geografisk-lokationsdatabase'); }

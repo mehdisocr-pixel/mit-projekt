@@ -45,6 +45,11 @@ export class ForsideComponent {
     ).subscribe(csvData => {
       this.data = this.csvToArray(csvData);
       this.updateTableColumns();
+    }, err => {
+      console.error('Kunne ikke hente opgavedata', err);
+      this.data = [];
+      this.updateTableColumns();
+      alert('Kunne ikke hente opgavedata. Prøv igen senere.');
     });
 
     // Hent steddata (til destination-feltet i modal)
@@ -55,6 +60,9 @@ export class ForsideComponent {
           .filter(row => row['Sted'] && typeof row['Sted'] === 'string')
           .map(row => row['Sted']);
       }
+    }, err => {
+      console.error('Kunne ikke hente steddata', err);
+      this.stedData = [];
     });
   }
 
@@ -131,6 +139,7 @@ export class ForsideComponent {
         this.opgaveTyper = [];
       }
     }, err => {
+      console.error('Kunne ikke hente opgavetyper', err);
       this.opgaveTyper = [];
     });
   }

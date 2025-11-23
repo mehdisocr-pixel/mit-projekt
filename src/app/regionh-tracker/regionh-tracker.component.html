@@ -1,0 +1,22 @@
+<app-dropdown-regionh-tracker></app-dropdown-regionh-tracker>
+
+<div class="regionh-root">
+  <div class="regionh-grid" *ngIf="devices$ | async as devices; else loading">
+    <div class="regionh-card" *ngFor="let device of devices">
+      <h2>{{ device.name || device.id }}</h2>
+      <p><span class="label">Online:</span> <span [class.ok]="device.online === true" [class.warn]="device.online === false">{{ formatOnline(device.online) }}</span></p>
+      <p><span class="label">Senest set:</span> {{ formatLastSeen(device.lastSeen) }}</p>
+      <p><span class="label">IP:</span> {{ formatIp(device.ip) }}</p>
+      <p><span class="label">Lokation:</span> {{ device.resolved?.location || 'Ukendt' }}</p>
+      <p><span class="label">Opgang:</span> {{ device.resolved?.opgang || '-' }}</p>
+      <p><span class="label">Etage:</span>  {{ device.resolved?.etage  || '-' }}</p>
+      <p><span class="label">Afsnit:</span> {{ device.resolved?.afsnit || '-' }}</p>
+    </div>
+  </div>
+
+  <ng-template #loading>
+    <div class="regionh-card">
+      <p class="muted">Indl&#230;ser status...</p>
+    </div>
+  </ng-template>
+</div>

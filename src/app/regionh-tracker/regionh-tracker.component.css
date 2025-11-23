@@ -1,0 +1,58 @@
+.regionh-root {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  background: radial-gradient(circle at 20% 20%, rgba(33,150,243,0.15), transparent 35%),
+              radial-gradient(circle at 80% 30%, rgba(46,125,50,0.12), transparent 40%),
+              #0e1424;
+}
+
+.regionh-grid {
+  width: min(1100px, 100%);
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.regionh-card {
+  background: #1b2436;
+  color: #e8f1ff;
+  border-radius: 16px;
+  padding: 1.6rem 1.8rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  min-height: 190px;
+}
+
+h2 {
+  margin: 0 0 1rem 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.label {
+  display: inline-block;
+  min-width: 110px;
+  color: #9cb6d6;
+}
+
+.muted {
+  color: #7d8aa5;
+}
+
+.ok {
+  color: #6dd27c;
+}
+
+.warn {
+  color: #ffb74d;
+}

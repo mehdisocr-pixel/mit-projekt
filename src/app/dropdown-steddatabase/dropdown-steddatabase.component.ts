@@ -31,6 +31,11 @@ export class DropdownSteddatabaseComponent {
     this.router.navigate(['/location-db']);
   }
 
+  goToRegionhTracker() {
+    this.showDropdown = false;
+    this.router.navigate(['/regionh-tracker']);
+  }
+
   openBulkModal() {
     this.showDropdown = false;
     this.bulkCreate.emit();

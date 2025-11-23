@@ -4,7 +4,7 @@
     <h2>Opret ny AP lokation</h2>
     <label>AP navn:</label>
     <input type="text" [(ngModel)]="newApNavn" />
-    <label>Mac adresse:</label>
+    <label>BSSID:</label>
     <input type="text" [(ngModel)]="newMac" />
     <label>Lokation:</label>
     <input type="text" [(ngModel)]="newLocation" />
@@ -46,10 +46,22 @@
               AP navn {{ sortIcon('AP navn') }}
             </th>
             <th (click)="sortBy('Mac adresse')" class="sortable">
-              Mac adresse {{ sortIcon('Mac adresse') }}
+              BSSID {{ sortIcon('Mac adresse') }}
             </th>
             <th (click)="sortBy('Lokation')" class="sortable">
               Lokation {{ sortIcon('Lokation') }}
+            </th>
+            <th (click)="sortBy('Afsnitsnr')" class="sortable">
+              Afsnitsnr {{ sortIcon('Afsnitsnr') }}
+            </th>
+            <th (click)="sortBy('Opgang')" class="sortable">
+              Opgang {{ sortIcon('Opgang') }}
+            </th>
+            <th (click)="sortBy('Etage')" class="sortable">
+              Etage {{ sortIcon('Etage') }}
+            </th>
+            <th (click)="sortBy('Afsnit')" class="sortable">
+              Afsnit {{ sortIcon('Afsnit') }}
             </th>
             <th></th>
           </tr>
@@ -64,6 +76,10 @@
             <td>{{ row['AP navn'] }}</td>
             <td>{{ row['Mac adresse'] }}</td>
             <td>{{ row['Lokation'] }}</td>
+            <td>{{ row['Afsnitsnr'] }}</td>
+            <td>{{ row['Opgang'] }}</td>
+            <td>{{ row['Etage'] }}</td>
+            <td>{{ row['Afsnit'] }}</td>
             <td class="action-cell">
               <span *ngIf="hoveredRow === row" (click)="editRow(row)" class="edit-icon" title="Rediger">&#9998;</span>
               <span *ngIf="hoveredRow === row" (click)="confirmDeleteRow(row)" class="delete-icon" title="Slet">
@@ -85,7 +101,7 @@
       <h3>Rediger lokation</h3>
       <label>AP navn:</label>
       <input type="text" [(ngModel)]="editingRow['AP navn']" />
-      <label>Mac adresse:</label>
+      <label>BSSID:</label>
       <input type="text" [(ngModel)]="editingRow['Mac adresse']" />
       <label>Lokation:</label>
       <input type="text" [(ngModel)]="editingRow['Lokation']" />
@@ -102,7 +118,7 @@
       <div style="margin-bottom:1.2rem; opacity:0.7;">
         <div><b>Oprettet:</b> {{ rowToDelete['Oprettet'] }}</div>
         <div><b>AP navn:</b> {{ rowToDelete['AP navn'] }}</div>
-        <div><b>Mac adresse:</b> {{ rowToDelete['Mac adresse'] }}</div>
+        <div><b>BSSID:</b> {{ rowToDelete['Mac adresse'] }}</div>
         <div><b>Lokation:</b> {{ rowToDelete['Lokation'] }}</div>
       </div>
       <button (click)="deleteRowConfirmed()" style="background:#e53935; color:#fff; margin-right:16px; border:none; border-radius:7px; padding:0.7rem 2.1rem; font-size:1.05rem; cursor:pointer;">Slet</button>

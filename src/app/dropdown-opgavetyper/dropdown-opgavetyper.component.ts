@@ -31,6 +31,11 @@ export class DropdownOpgavetyperComponent {
     this.router.navigate(['/location-db']);
   }
 
+  goToRegionhTracker() {
+    this.showDropdown = false;
+    this.router.navigate(['/regionh-tracker']);
+  }
+
   goToSteddatabase() {
     this.showDropdown = false;
     this.router.navigate(['/steddatabase']);

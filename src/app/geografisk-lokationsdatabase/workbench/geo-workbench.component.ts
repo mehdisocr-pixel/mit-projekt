@@ -12,15 +12,16 @@ import { SectionService } from '../services/section.service';
 import { HospitalService } from '../services/hospital.service';
 import { BuildingModel } from '../models/building.model';
 import { HospitalModel } from '../models/hospital.model';
+import { LocationDbService, LocationDbRecord } from '../../location-db/location-db.service';
+import { parseLocationDetails } from '../../location-db/location-parser';
 
 // Datakilde
 import { SteddataService, StedRow } from '../services/steddata.service';
 
 // Modal til detaljer
-import { DetailModalComponent } from '../shared/detail-modal/detail-modal.component';
+import { DetailModalComponent, DetailSection } from '../shared/detail-modal/detail-modal.component';
 
 type ActiveForm = 'hospital' | 'building' | 'section' | null;
-
 @Component({
   selector: 'app-geo-workbench',
   standalone: true,
@@ -34,6 +35,7 @@ export class GeoWorkbenchComponent implements AfterViewInit, OnDestroy {
   private sectionSvc  = inject(SectionService);
   private hospitalSvc = inject(HospitalService);
   private stedSvc     = inject(SteddataService);
+  private locationDbSvc = inject(LocationDbService);
 
   buildings$: Observable<BuildingModel[]> = this.buildingSvc.list();
 
@@ -49,6 +51,7 @@ export class GeoWorkbenchComponent implements AfterViewInit, OnDestroy {
   private buildingLayer = L.layerGroup();
   private sectionLayer  = L.layerGroup();
   private invalidate = () => this.map?.invalidateSize();
+  private apByAfsnitsnr = new Map<string, LocationDbRecord[]>();
 
   // subscriptions
   private subs = new Subscription();
@@ -91,7 +94,7 @@ export class GeoWorkbenchComponent implements AfterViewInit, OnDestroy {
   // Modal
   showModal = false;
   modalTitle = '';
-  modalData: Record<string, any> | null = null;
+  modalSections: DetailSection[] | null = null;
 
   async ngAfterViewInit(): Promise<void> {
     (L as any).Icon.Default.mergeOptions({
@@ -112,6 +115,11 @@ export class GeoWorkbenchComponent implements AfterViewInit, OnDestroy {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 20, attribution: '&copy; OpenStreetMap'
     }).addTo(this.map);
+
+    const hospitalPane = this.map.createPane('hospitalPane');
+    const buildingPane = this.map.createPane('buildingPane');
+    if (hospitalPane) hospitalPane.style.zIndex = '410';
+    if (buildingPane) buildingPane.style.zIndex = '420';
 
     this.hospitalLayer.addTo(this.map);
     this.buildingLayer.addTo(this.map);
@@ -161,6 +169,19 @@ export class GeoWorkbenchComponent implements AfterViewInit, OnDestroy {
     // 1) Hent data ved opstart (vigtigt efter refresh)
     this.subs.add(this.hospitalSvc.syncFromSheets().subscribe());
     this.subs.add(this.buildingSvc.syncFromSheets().subscribe());
+    this.subs.add(
+      this.locationDbSvc.loadAll().subscribe(rows => {
+        this.apByAfsnitsnr.clear();
+        rows.forEach(row => {
+          const parsed = parseLocationDetails(row.location);
+          const key = parsed?.afsnitsnr;
+          if (!key) return;
+          const existing = this.apByAfsnitsnr.get(key);
+          if (existing) existing.push(row);
+          else this.apByAfsnitsnr.set(key, [row]);
+        });
+      })
+    );
 
 
 
@@ -175,7 +196,8 @@ export class GeoWorkbenchComponent implements AfterViewInit, OnDestroy {
 
           const outer = rings[0] as [number, number][];
           const latlngs = outer.map(([lng, lat]) => L.latLng(lat, lng));
-          L.polygon(latlngs, { color: '#7c3aed', fillOpacity: 0.15 }).addTo(this.hospitalLayer);
+          L.polygon(latlngs, { color: '#7c3aed', fillOpacity: 0.15, pane: 'hospitalPane' })
+            .addTo(this.hospitalLayer);
         }
       })
     );
@@ -189,9 +211,11 @@ export class GeoWorkbenchComponent implements AfterViewInit, OnDestroy {
 
           const outer = rings[0] as [number, number][];
           const latlngs = outer.map(([lng, lat]) => L.latLng(lat, lng));
-          const layer = L.polygon(latlngs, { color: '#2563eb', fillOpacity: 0.35 }).addTo(this.buildingLayer);
-          (layer as any).__opgang = b.name;
-          layer.on('click', () => this.openBuildingInspector((layer as any).__opgang));
+          const opgangNavn = (b.name ?? b.navn ?? '').trim() || b.id;
+          const layer = L.polygon(latlngs, { color: '#2563eb', fillOpacity: 0.35, pane: 'buildingPane' })
+            .addTo(this.buildingLayer);
+          layer.on('click', () => this.openBuildingInspector(opgangNavn));
+          layer.bringToFront();
         }
       })
     );
@@ -307,19 +331,45 @@ export class GeoWorkbenchComponent implements AfterViewInit, OnDestroy {
 
   openRowDetails(r: StedRow) {
     this.modalTitle = `${r.Afsnitsnr || ''} ${r.AfsnitsnavnRumnavn || ''}`.trim() || 'Detaljer';
-    this.modalData = {
+    const stedRows: Record<string, any> = {
       Sted: r.Sted,
       Afsnitsnr: r.Afsnitsnr,
       'Afsnitsnavn/rumnavn': r.AfsnitsnavnRumnavn,
       Opgang: r.Opgang,
       Etage: r.Etage,
       Afsnit: r.Afsnit,
-      Oprettet: r.Oprettet
+      Oprettet: r.Oprettet ?? '',
     };
+
+    const apRows: Record<string, any> = {};
+    const key = String(r.Afsnitsnr ?? '').trim();
+    const matches = key ? this.apByAfsnitsnr.get(key) ?? [] : [];
+    if (matches.length) {
+      matches.forEach((ap, idx) => {
+        const label = `AP ${idx + 1}`;
+        apRows[`${label} navn`] = ap.apName || 'Ukendt';
+        apRows[`${label} BSSID`] = ap.macAddress || '-';
+        apRows[`${label} lokation`] = ap.location || '-';
+      });
+    } else {
+      apRows['Ingen access points'] = 'Der er ikke registreret AP for dette afsnit.';
+    }
+
+    this.modalSections = [
+      { title: 'Steder', rows: stedRows },
+      { title: 'Access Points', rows: apRows, apEntries: matches },
+    ];
     this.showModal = true;
   }
 
-  closeModal() { this.showModal = false; this.modalData = null; }
+  closeModal() { this.showModal = false; this.modalSections = null; }
+
+  onApUpdated(event: { id: string; changes: { apName: string; macAddress: string; location: string } }) {
+    this.locationDbSvc.update(event.id, event.changes).subscribe({
+      next: () => {},
+      error: () => alert('Kunne ikke opdatere access point. Prøv igen.'),
+    });
+  }
 
   clearInspector() {
     this.selectedOpgang = null;

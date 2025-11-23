@@ -1,0 +1,38 @@
+<div class="dropdown-root">
+  <div class="control-panel">
+    <div class="control-field">
+      <label for="ssidSelect">SSID</label>
+      <select id="ssidSelect" [disabled]="isSaving" (change)="onSelectSsid($any($event.target).value)">
+        <option value="" selected disabled>Vælg SSID</option>
+        <option *ngFor="let ssid of ssidOptions" [value]="ssid">{{ ssid }}</option>
+      </select>
+    </div>
+    <div class="control-field">
+      <label for="channelSelect">Kanal</label>
+      <select id="channelSelect" [disabled]="isSaving" (change)="onSelectChannel($any($event.target).value)">
+        <option value="" selected disabled>Vælg kanal</option>
+        <option *ngFor="let ch of channelOptions" [value]="ch">{{ ch }}</option>
+      </select>
+    </div>
+    <div class="status" *ngIf="isSaving">Gemmer...</div>
+    <div class="status error" *ngIf="errorMsg">{{ errorMsg }}</div>
+  </div>
+
+  <div class="hamburger" (click)="toggleDropdown($event)" aria-label="Menu" title="Menu">&#9776;</div>
+
+  <div *ngIf="showDropdown" class="dropdown-menu" (click)="$event.stopPropagation()">
+    <div *ngIf="router.url !== '/'" class="dropdown-option" (click)="goToForside()">Koordinatorskaerm</div>
+    <div *ngIf="router.url !== '/location-db'" class="dropdown-option" (click)="goToLocationDb()">AP lokationsdatabase</div>
+    <div *ngIf="router.url !== '/steddatabase'" class="dropdown-option" (click)="goToSteddatabase()">Steddatabase</div>
+    <div *ngIf="router.url !== '/opgavetyper'" class="dropdown-option" (click)="goToOpgavetyper()">Opgavetyper</div>
+
+    <hr class="sep" />
+
+    <div *ngIf="router.url !== '/geografisk-lokationsdatabase'"
+         class="dropdown-option"
+         (click)="goToGeoWorkbench()">
+      Geografisk lokationsdatabase
+    </div>
+    <div *ngIf="router.url !== '/regionh-tracker'" class="dropdown-option" (click)="goToRegionHTracker()">Region H tracker</div>
+  </div>
+</div>

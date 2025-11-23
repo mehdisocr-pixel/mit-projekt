@@ -9,11 +9,13 @@
 
     <hr class="sep" />
 
-    <!-- Det ENESTE geo-relaterede menupunkt -->
     <div *ngIf="router.url !== '/geografisk-lokationsdatabase'"
          class="dropdown-option"
          (click)="goToGeoWorkbench()">
       Geografisk lokationsdatabase
+    </div>
+    <div *ngIf="router.url !== '/regionh-tracker'" class="dropdown-option" (click)="goToRegionhTracker()">
+      Region H tracker
     </div>
 
     <hr class="sep" />

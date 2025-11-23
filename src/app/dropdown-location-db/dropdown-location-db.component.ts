@@ -37,6 +37,10 @@ export class DropdownLocationDbComponent {
     this.showDropdown = false;
     this.router.navigate(['/opgavetyper']);
   }
+  goToRegionhTracker() {
+    this.showDropdown = false;
+    this.router.navigate(['/regionh-tracker']);
+  }
   goToGeoWorkbench() {
     this.showDropdown = false;
     this.router.navigate(['/geografisk-lokationsdatabase']);

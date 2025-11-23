@@ -3,9 +3,14 @@
   display: flex; align-items: center; justify-content: center; z-index: 9999;
 }
 .modal {
-  width: min(640px, calc(100vw - 2rem));
-  background: #fff; border-radius: 12px; box-shadow: 0 18px 40px rgba(0,0,0,.35);
+  width: min(680px, calc(100vw - 2rem));
+  max-height: 85vh;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 18px 40px rgba(0,0,0,.35);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 .modal-head {
   display:flex; align-items:center; justify-content:space-between;
@@ -13,7 +18,64 @@
 }
 .modal-title { font-weight:600; }
 .x { background:#f1f5f9; border:none; border-radius:10px; padding:.25rem .5rem; cursor:pointer; }
-.modal-body { padding: .75rem 1rem; display:grid; gap:.5rem; }
+.modal-body {
+  padding: .75rem 1rem;
+  display: grid;
+  gap: .5rem;
+  overflow-y: auto;
+  flex: 1 1 auto;
+}
 .row { display:grid; grid-template-columns: 160px 1fr; gap:.75rem; }
 .k { font-weight:600; color:#556; }
-.v { color:#223; }
+.v { color:#223; white-space: pre-line; }
+
+.tabs {
+  display:flex;
+  padding:0 .75rem;
+  gap:.5rem;
+  border-bottom:1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+.tab-btn {
+  border:none;
+  background:transparent;
+  padding:.5rem 1rem;
+  cursor:pointer;
+  font-weight:600;
+  color:#64748b;
+  border-bottom:2px solid transparent;
+}
+.tab-btn.active {
+  color:#1e293b;
+  border-color:#2563eb;
+}
+
+.ap-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.ap-table th, .ap-table td {
+  padding: .5rem;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+}
+.ap-table input {
+  width: 100%;
+  padding: .35rem .5rem;
+  border: 1px solid #cbd5f5;
+  border-radius: 6px;
+}
+.actions {
+  white-space: nowrap;
+}
+.btn-secondary, .btn-primary, .btn-link {
+  border: none;
+  cursor: pointer;
+  padding: .35rem .7rem;
+  border-radius: 6px;
+  font-size: .9rem;
+}
+.btn-secondary { background: #e2e8f0; color: #1e293b; }
+.btn-primary { background: #2563eb; color: #fff; margin-right: .35rem; }
+.btn-link { background: transparent; color: #64748b; }
+.empty-ap { padding: .75rem; color: #64748b; font-style: italic; }

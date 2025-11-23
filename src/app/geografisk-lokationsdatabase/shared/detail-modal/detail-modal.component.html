@@ -2,15 +2,77 @@
   <div class="modal">
     <div class="modal-head">
       <div class="modal-title">{{ title }}</div>
-      <button class="x" (click)="closed.emit()" aria-label="Luk">×</button>
+      <button class="x" (click)="closed.emit()" aria-label="Luk">&#10005;</button>
     </div>
 
-    <div class="modal-body" *ngIf="data">
-      <!-- Brug keyvalue-pipen i stedet for Object.keys(...) -->
-      <div class="row" *ngFor="let kv of data | keyvalue">
-        <div class="k">{{ kv.key }}</div>
-        <div class="v">{{ kv.value }}</div>
+    <ng-container *ngIf="sections?.length; else emptyState">
+      <div class="tabs">
+        <button
+          *ngFor="let section of sections; let i = index"
+          type="button"
+          class="tab-btn"
+          [class.active]="i === activeTab"
+          (click)="setTab(i)">
+          {{ section.title }}
+        </button>
       </div>
-    </div>
+
+      <div class="modal-body" *ngIf="currentSection as section">
+        <ng-container *ngIf="section.apEntries !== undefined; else keyValueTemplate">
+          <table class="ap-table" *ngIf="section.apEntries?.length; else noApTemplate">
+            <thead>
+              <tr>
+                <th>AP navn</th>
+                <th>BSSID</th>
+                <th>Lokation</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let ap of section.apEntries; let i = index">
+                <td *ngIf="editIndex !== i">{{ ap.apName || 'Ukendt' }}</td>
+                <td *ngIf="editIndex === i">
+                  <input [(ngModel)]="editModel.apName" />
+                </td>
+                <td *ngIf="editIndex !== i">{{ ap.macAddress || '-' }}</td>
+                <td *ngIf="editIndex === i">
+                  <input [(ngModel)]="editModel.macAddress" />
+                </td>
+                <td *ngIf="editIndex !== i">{{ ap.location || '-' }}</td>
+                <td *ngIf="editIndex === i">
+                  <input [(ngModel)]="editModel.location" />
+                </td>
+                <td class="actions">
+                  <button class="btn-secondary" *ngIf="editIndex !== i" (click)="beginEdit(ap, i)">Rediger</button>
+                  <ng-container *ngIf="editIndex === i">
+                    <button class="btn-primary" (click)="saveEdit(ap)">Gem</button>
+                    <button class="btn-link" (click)="cancelEdit()">Annuller</button>
+                  </ng-container>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <ng-template #noApTemplate>
+            <div class="empty-ap">Ingen access points.</div>
+          </ng-template>
+        </ng-container>
+
+        <ng-template #keyValueTemplate>
+          <div class="row" *ngFor="let kv of section.rows | keyvalue">
+            <div class="k">{{ kv.key }}</div>
+            <div class="v">{{ kv.value }}</div>
+          </div>
+        </ng-template>
+      </div>
+    </ng-container>
+
+    <ng-template #emptyState>
+      <div class="modal-body">
+        <div class="row">
+          <div class="k">Ingen data</div>
+          <div class="v">Der er ingen oplysninger at vise.</div>
+        </div>
+      </div>
+    </ng-template>
   </div>
 </div>
