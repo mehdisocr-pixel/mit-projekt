@@ -45,7 +45,7 @@ export class RegionhTrackerService {
 
   constructor() {
     // Sørg for at m5demo-appen er initialiseret uden at røre default app
-    const existing: FirebaseApp | undefined = getApps().find(a => a.name === 'm5demo');
+    const existing: FirebaseApp | undefined = getApps().find((a: FirebaseApp) => a.name === 'm5demo');
     const app = existing ?? initializeApp(environment.m5DemoFirebase, 'm5demo');
     this.firestore = getFirestore(app);
     this.documentRef = doc(this.firestore, 'devices/m5demo');

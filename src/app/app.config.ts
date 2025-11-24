@@ -14,7 +14,6 @@ import { routes } from './app.routes';
 import { environment } from '../environments/environment';
 
 const hasFirebaseConfig = !!environment?.firebase;
-const hasM5DemoConfig = !!environment?.m5DemoFirebase;
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -29,14 +28,7 @@ export const appConfig: ApplicationConfig = {
       }
       return initializeApp(environment.firebase);
     }),
-    // Default app Firestore/Auth
     provideFirestore(() => getFirestore()),
     provideAuth(() => getAuth()),
-    // Ekstra app til m5demo (navngivet, så default ikke overskrives)
-    ...(hasM5DemoConfig
-      ? [
-          provideFirebaseApp(() => initializeApp(environment.m5DemoFirebase, 'm5demo')),
-        ]
-      : []),
   ],
 };
