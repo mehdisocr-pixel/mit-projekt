@@ -1,0 +1,44 @@
+.dropdown-root {
+  position: relative;
+  display: inline-block;
+  z-index: 1000;
+}
+
+.hamburger {
+  font-size: 1.9rem;
+  color: #e8f0ff;
+  cursor: pointer;
+  padding: 6px 10px;
+  background: rgba(28, 36, 48, 0.8);
+  border-radius: 8px;
+  border: 1px solid #1f2a3a;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 42px;
+  left: 0;
+  min-width: 220px;
+  background: #0f1622;
+  border: 1px solid #1f2a3a;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  padding: 8px 0;
+  color: #e8f0ff;
+}
+
+.dropdown-option {
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.dropdown-option:hover {
+  background: #1b2534;
+}
+
+.sep {
+  border: none;
+  border-top: 1px solid #1f2a3a;
+  margin: 6px 0;
+}

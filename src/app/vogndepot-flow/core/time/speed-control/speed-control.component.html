@@ -1,0 +1,20 @@
+<div class="speed-control">
+  <label for="speed">Hastighed (min/sek)</label>
+  <div class="inputs">
+    <input
+      id="speed"
+      type="number"
+      min="0"
+      [ngModel]="speed"
+      (ngModelChange)="onChange($event)"
+    />
+    <input
+      type="range"
+      min="0"
+      max="600"
+      step="10"
+      [ngModel]="speed"
+      (ngModelChange)="onChange($event)"
+    />
+  </div>
+</div>

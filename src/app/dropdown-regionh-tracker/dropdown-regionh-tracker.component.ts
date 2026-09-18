@@ -36,6 +36,9 @@ export class DropdownRegionhTrackerComponent {
   goToLocationDb() { this.goTo('/location-db'); }
   goToSteddatabase() { this.goTo('/steddatabase'); }
   goToOpgavetyper() { this.goTo('/opgavetyper'); }
+  goToPrototypetracker() { this.goTo('/prototypetracker'); }
+  goToBssidScans() { this.goTo('/bssid-scans'); }
+  goToVogndepotFlow() { this.goTo('/vogndepot-flow'); }
 
   // ENESTE geo-punkt vi beholder
   goToGeoWorkbench() { this.goTo('/geografisk-lokationsdatabase'); }

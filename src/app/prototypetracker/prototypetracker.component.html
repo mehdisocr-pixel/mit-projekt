@@ -1,0 +1,33 @@
+<app-dropdown-prototypetracker></app-dropdown-prototypetracker>
+
+<div class="proto-root" *ngIf="vm$ | async as vm">
+  <div class="header">
+    <h1>Prototypetracker</h1>
+    <p class="muted">Seneste status for Prototype 1</p>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div>
+        <div class="name">{{ vm.name }}</div>
+        <div class="location">{{ vm.locationName }}</div>
+      </div>
+      <span class="status" [class.online]="vm.statusClass === 'online'" [class.offline]="vm.statusClass === 'offline'">
+        {{ vm.statusLabel }}
+      </span>
+    </div>
+
+    <div class="meta">
+      <span class="label">Sidst set:</span>
+      <span>{{ vm.lastSeenText }}</span>
+    </div>
+    <div class="meta">
+      <span class="label">Signal:</span>
+      <span>{{ vm.signalText }}</span>
+    </div>
+  </div>
+
+  <div *ngIf="!vm.hasData" class="muted note">
+    Ingen scanninger modtaget endnu.
+  </div>
+</div>

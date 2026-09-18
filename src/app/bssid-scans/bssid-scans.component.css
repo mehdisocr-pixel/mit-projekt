@@ -1,0 +1,122 @@
+:host {
+  display: block;
+}
+
+.page {
+  min-height: 100vh;
+  padding: 3rem 1.5rem;
+  background: radial-gradient(circle at 15% 20%, rgba(33, 150, 243, 0.12), transparent 35%),
+              radial-gradient(circle at 80% 30%, rgba(46, 125, 50, 0.10), transparent 38%),
+              #0e1424;
+  color: #e8f1ff;
+}
+
+.header {
+  margin: 0 auto 1.5rem;
+  max-width: 1200px;
+}
+
+h1 {
+  margin: 0 0 0.35rem 0;
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+.muted {
+  color: #8a9ab8;
+}
+
+.card {
+  margin: 0 auto;
+  max-width: 1200px;
+  background: #1b2436;
+  border-radius: 18px;
+  padding: 1.2rem 1.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+}
+
+.table-wrapper {
+  overflow: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.98rem;
+}
+
+th, td {
+  padding: 0.65rem 0.55rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+th {
+  color: #9cb6d6;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+td {
+  color: #d9e4ff;
+  vertical-align: top;
+}
+
+.mono {
+  font-family: Consolas, 'Courier New', monospace;
+  letter-spacing: 0.01em;
+}
+
+.pill {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.pill.ok {
+  background: rgba(109, 210, 124, 0.18);
+  color: #6dd27c;
+  border-color: rgba(109, 210, 124, 0.35);
+}
+
+.pill.miss {
+  background: rgba(255, 99, 99, 0.16);
+  color: #ff8a8a;
+  border-color: rgba(255, 99, 99, 0.3);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.35rem 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+}
+
+.chip.ok {
+  background: rgba(109, 210, 124, 0.15);
+  border-color: rgba(109, 210, 124, 0.35);
+}
+
+.chip.miss {
+  background: rgba(255, 99, 99, 0.12);
+  border-color: rgba(255, 99, 99, 0.28);
+}
+
+.chip-location {
+  font-weight: 700;
+  color: #d9e4ff;
+}

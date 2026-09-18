@@ -1,0 +1,71 @@
+<div class="flow-editor">
+  <h3>Opret flow-event</h3>
+
+  <div class="row">
+    <label>Tid (HH:mm)</label>
+    <input type="time" [(ngModel)]="model.time" />
+  </div>
+
+  <div class="row">
+    <label>Cart type</label>
+    <select [(ngModel)]="model.cartType" (change)="onCartTypeChange()">
+      <option value="" disabled>Vaelg vogn</option>
+      <option *ngFor="let c of cartTypes" [value]="c">{{ c }}</option>
+    </select>
+  </div>
+
+  <div class="row">
+    <label>Action</label>
+    <select [(ngModel)]="model.action">
+      <option *ngFor="let a of actions" [value]="a">{{ a }}</option>
+    </select>
+  </div>
+
+  <div class="row">
+    <label>On complete</label>
+    <select [(ngModel)]="model.onComplete">
+      <option *ngFor="let c of completions" [value]="c">{{ c }}</option>
+    </select>
+  </div>
+
+  <div class="coords">
+    <div class="coord-block">
+      <div class="block-title">Start</div>
+      <div class="coord-row">
+        <span class="coord-label">X</span>
+        <input type="number" [(ngModel)]="model.startX" />
+      </div>
+      <div class="coord-row">
+        <span class="coord-label">Y</span>
+        <input type="number" [(ngModel)]="model.startY" />
+      </div>
+      <div class="coord-row">
+        <span class="coord-label">Z</span>
+        <input type="number" [(ngModel)]="model.startZ" />
+      </div>
+    </div>
+    <div class="coord-block">
+      <div class="block-title">Slut</div>
+      <div class="coord-row">
+        <span class="coord-label">X</span>
+        <input type="number" [(ngModel)]="model.endX" />
+      </div>
+      <div class="coord-row">
+        <span class="coord-label">Y</span>
+        <input type="number" [(ngModel)]="model.endY" />
+      </div>
+      <div class="coord-row">
+        <span class="coord-label">Z</span>
+        <input type="number" [(ngModel)]="model.endZ" />
+      </div>
+    </div>
+  </div>
+
+  <div class="capture-row">
+    <button type="button" (click)="captureStart.emit()">Brug valgt vogn som start</button>
+    <button type="button" (click)="captureEnd.emit()">Brug valgt vogn som slut</button>
+    <div class="selected-info" *ngIf="selectedCartLabel">Valgt vogn: {{ selectedCartLabel }}</div>
+  </div>
+
+  <button type="button" (click)="submit()">Tilføj</button>
+</div>

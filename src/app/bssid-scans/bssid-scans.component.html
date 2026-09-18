@@ -1,0 +1,52 @@
+<app-dropdown-bssid-scans></app-dropdown-bssid-scans>
+
+<div class="page" *ngIf="rows$ | async as rows">
+  <header class="header">
+    <h1>BSSID scans</h1>
+    <p class="muted">Live data fra dualtracker-e9102 & lokationsopslag</p>
+  </header>
+
+  <div class="card">
+    <div class="table-wrapper" *ngIf="rows.length; else emptyState">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Tidspunkt</th>
+            <th>Stærkeste BSSID</th>
+            <th>RSSI</th>
+            <th>Kanal</th>
+            <th>Lokation</th>
+            <th>BSSID-liste</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of rows">
+            <td class="mono">{{ row.id }}</td>
+            <td>{{ row.timestampText }}</td>
+            <td class="mono">{{ row.bestBssid }}</td>
+            <td>{{ row.rssiText }}</td>
+            <td>{{ row.channelText }}</td>
+            <td>
+              <span class="pill" [class.ok]="row.matchClass === 'matched'" [class.miss]="row.matchClass === 'unmatched'">
+                {{ row.locationLabel }}
+              </span>
+            </td>
+            <td>
+              <div class="chips">
+                <span class="chip" *ngFor="let entry of row.entries" [class.ok]="entry.matchClass === 'matched'" [class.miss]="entry.matchClass === 'unmatched'">
+                  <span class="mono">{{ entry.bssid }}</span>
+                  <span class="muted">({{ entry.rssiText }}<span *ngIf="entry.channelText">, {{ entry.channelText }}</span>)</span>
+                  <span class="chip-location">{{ entry.locationLabel }}</span>
+                </span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #emptyState>
+      <div class="muted">Ingen scans fundet.</div>
+    </ng-template>
+  </div>
+</div>

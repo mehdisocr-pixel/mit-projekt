@@ -26,6 +26,9 @@ export class DropdownForsideComponent {
   goToSteddatabase()   { this.closeAnd('/steddatabase'); }
   goToOpgavetyper()    { this.closeAnd('/opgavetyper'); }
   goToRegionhTracker() { this.closeAnd('/regionh-tracker'); }
+  goToPrototypetracker() { this.closeAnd('/prototypetracker'); }
+  goToBssidScans()     { this.closeAnd('/bssid-scans'); }
+  goToVogndepotFlow()  { this.closeAnd('/vogndepot-flow'); }
 
   // ENESTE geo-punkt vi beholder
   goToGeoWorkbench()   { this.closeAnd('/geografisk-lokationsdatabase'); }

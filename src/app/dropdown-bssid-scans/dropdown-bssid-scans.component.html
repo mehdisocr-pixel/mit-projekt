@@ -1,0 +1,15 @@
+<div class="dropdown-root">
+  <div class="hamburger" (click)="toggleDropdown($event)" aria-label="Menu" title="Menu">&#9776;</div>
+
+  <div *ngIf="showDropdown" class="dropdown-menu" (click)="$event.stopPropagation()">
+    <div *ngIf="router.url !== '/'" class="dropdown-option" (click)="goToForside()">Koordinatorskaerm</div>
+    <div *ngIf="router.url !== '/regionh-tracker'" class="dropdown-option" (click)="goToRegionhTracker()">Region H tracker</div>
+    <div *ngIf="router.url !== '/prototypetracker'" class="dropdown-option" (click)="goToPrototypetracker()">Prototypetracker</div>
+    <div *ngIf="router.url !== '/bssid-scans'" class="dropdown-option" (click)="goToBssidScans()">BSSID scans</div>
+    <div *ngIf="router.url !== '/location-db'" class="dropdown-option" (click)="goToLocationDb()">AP lokationsdatabase</div>
+    <div *ngIf="router.url !== '/steddatabase'" class="dropdown-option" (click)="goToSteddatabase()">Steddatabase</div>
+    <div *ngIf="router.url !== '/opgavetyper'" class="dropdown-option" (click)="goToOpgavetyper()">Opgavetyper</div>
+    <div *ngIf="router.url !== '/geografisk-lokationsdatabase'" class="dropdown-option" (click)="goToGeoWorkbench()">Geografisk lokationsdatabase</div>
+    <div *ngIf="router.url !== '/vogndepot-flow'" class="dropdown-option" (click)="goToVogndepotFlow()">Vogndepot flow 3D</div>
+  </div>
+</div>

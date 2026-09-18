@@ -1,0 +1,181 @@
+.flow-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #0b0f14;
+  color: #e8f0ff;
+  border: 1px solid #1c2430;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.menu {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 10;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: 12px;
+  padding: 12px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.viewer-wrapper {
+  position: relative;
+  min-height: 420px;
+  border: 1px solid #1c2430;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: radial-gradient(circle at 20% 20%, #121826, #0b0f14 55%);
+}
+
+.input-layer {
+  position: absolute;
+  inset: 0;
+  cursor: crosshair;
+}
+
+.hud {
+  position: absolute;
+  top: 16px;
+  left: 60px;
+  display: flex;
+  gap: 10px;
+  padding: 8px 12px;
+  background: rgba(20, 28, 40, 0.7);
+  border: 1px solid #1f2a3a;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.time-label {
+  font-weight: 600;
+}
+
+.status {
+  opacity: 0.85;
+}
+
+.status.playing {
+  color: #6ee7b7;
+}
+
+.selection-rect {
+  position: absolute;
+  border: 1px solid #60a5fa;
+  background: rgba(96, 165, 250, 0.15);
+  pointer-events: none;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-top: 1px solid #1c2430;
+  background: #0f1622;
+}
+
+.sidebar {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.event-list {
+  background: #0f1622;
+  border: 1px solid #1f2a3a;
+  border-radius: 8px;
+  padding: 10px;
+  color: #e8f0ff;
+  font-size: 13px;
+  max-height: 320px;
+  overflow: auto;
+}
+
+.event-row {
+  display: grid;
+  grid-template-columns: 60px 1fr 70px 80px;
+  gap: 6px;
+  padding: 6px 0;
+  border-bottom: 1px solid #1f2a3a;
+}
+
+.event-row:last-child {
+  border-bottom: none;
+}
+
+.debug {
+  background: #0f1622;
+  border: 1px solid #1f2a3a;
+  border-radius: 8px;
+  padding: 10px;
+  color: #e8f0ff;
+  font-size: 12px;
+  display: grid;
+  gap: 6px;
+}
+
+.debug button {
+  background: #1f2937;
+  color: #e8f0ff;
+  border: 1px solid #283343;
+  border-radius: 6px;
+  padding: 6px 8px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.debug h5 {
+  margin: 0;
+  color: #9ca3af;
+}
+
+.controls button {
+  background: #1f2937;
+  color: #e8f0ff;
+  border: 1px solid #283343;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.controls button:hover {
+  background: #243142;
+  border-color: #4b5563;
+}
+
+.slider {
+  flex: 1;
+  position: relative;
+}
+
+input[type='range'] {
+  width: 100%;
+}
+
+.ticks {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 22px;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.ticks span {
+  position: absolute;
+  transform: translateX(-50%);
+}

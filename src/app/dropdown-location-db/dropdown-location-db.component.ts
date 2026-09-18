@@ -41,6 +41,18 @@ export class DropdownLocationDbComponent {
     this.showDropdown = false;
     this.router.navigate(['/regionh-tracker']);
   }
+  goToVogndepotFlow() {
+    this.showDropdown = false;
+    this.router.navigate(['/vogndepot-flow']);
+  }
+  goToPrototypetracker() {
+    this.showDropdown = false;
+    this.router.navigate(['/prototypetracker']);
+  }
+  goToBssidScans() {
+    this.showDropdown = false;
+    this.router.navigate(['/bssid-scans']);
+  }
   goToGeoWorkbench() {
     this.showDropdown = false;
     this.router.navigate(['/geografisk-lokationsdatabase']);

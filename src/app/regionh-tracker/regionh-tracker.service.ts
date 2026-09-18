@@ -8,9 +8,9 @@ import {
   getFirestore,
   writeBatch,
 } from '@angular/fire/firestore';
-import { getApps, initializeApp, FirebaseApp } from 'firebase/app';
+import { getApp, getApps, initializeApp, FirebaseApp } from 'firebase/app';
 import { Timestamp } from 'firebase/firestore';
-import { Observable, catchError, combineLatest, firstValueFrom, map, of, switchMap } from 'rxjs';
+import { Observable, catchError, combineLatest, map, of, switchMap } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface RegionhDeviceState {
@@ -25,7 +25,7 @@ export interface RegionhDeviceState {
 }
 
 type RegionhDeviceRaw = {
-  id?: unknown; // injected by collectionData via idField
+  id?: unknown;
   name?: unknown;
   bssid?: unknown;
   online?: unknown;
@@ -35,36 +35,33 @@ type RegionhDeviceRaw = {
   selectedChannel?: unknown;
 };
 
-// Marker enhed offline, hvis der ikke er modtaget heartbeat inden for denne grænse.
 const OFFLINE_THRESHOLD_MS = 6_000;
 
 @Injectable({ providedIn: 'root' })
 export class RegionhTrackerService {
   private readonly firestore: Firestore;
-  private readonly documentRef: ReturnType<typeof doc>;
 
   constructor() {
-    // Sørg for at m5demo-appen er initialiseret uden at røre default app
-    const existing: FirebaseApp | undefined = getApps().find((a: FirebaseApp) => a.name === 'm5demo');
+    // Brug sekundær app til m5demo projektet, så location-db (default app) forbliver intakt
+    const existing: FirebaseApp | undefined = getApps().find(app => app.name === 'm5demo');
     const app = existing ?? initializeApp(environment.m5DemoFirebase, 'm5demo');
     this.firestore = getFirestore(app);
-    this.documentRef = doc(this.firestore, 'devices/m5demo');
   }
 
-  // Beholder single-device endpoint hvis du bruger det andre steder.
   getDevice(): Observable<RegionhDeviceState> {
-    return docData<RegionhDeviceRaw>(this.documentRef).pipe(
+    const ref = doc(this.firestore, 'devices/m5demo');
+    return docData<RegionhDeviceRaw>(ref).pipe(
       map(data => this.mapRawToState(data, 'm5demo')),
       catchError(() => of({ id: 'm5demo', online: null, lastSeen: null, ip: '' })),
     );
   }
 
-  // Realtime: hent alle enheder og lyt på hvert dokument.
   getDevices(): Observable<RegionhDeviceState[]> {
     const colRef = collection(this.firestore, 'devices');
     return collectionData<RegionhDeviceRaw>(colRef, { idField: 'id' }).pipe(
       switchMap(rows => {
-        if (!rows?.length) return of([]);
+        if (!rows?.length) return of<RegionhDeviceState[]>([]);
+        // For live updates fra hvert dokument
         const streams = rows.map(raw => {
           const id = (raw as any)?.id;
           if (!id) return of(null);
@@ -82,14 +79,13 @@ export class RegionhTrackerService {
   }
 
   async updateAllDevices(field: 'selectedSsid' | 'selectedChannel', value: string | number): Promise<void> {
-    const snap = await firstValueFrom(
-      collectionData<RegionhDeviceRaw>(collection(this.firestore, 'devices'), { idField: 'id' }).pipe(
+    const ids = await collectionData(collection(this.firestore, 'devices'), { idField: 'id' })
+      .pipe(
         map(items => items.map(item => (item as any).id as string)),
         catchError(() => of([] as string[])),
-      ),
-    );
-    const ids = snap ?? [];
-    if (!ids.length) throw new Error('Ingen devices fundet');
+      )
+      .toPromise();
+    if (!ids || !ids.length) throw new Error('Ingen devices fundet');
 
     const batch = writeBatch(this.firestore);
     ids.forEach(id => {
@@ -106,12 +102,8 @@ export class RegionhTrackerService {
 
     if (lastSeen) {
       const age = Date.now() - lastSeen.getTime();
-      // Hvis ingen heartbeat inden for grænsen, vis offline uanset flag.
       online = age > OFFLINE_THRESHOLD_MS ? false : true;
-      // Respekter eksplicit false fra backend hvis den findes.
-      if (onlineRaw === false) {
-        online = false;
-      }
+      if (onlineRaw === false) online = false;
     }
 
     return {
@@ -128,36 +120,21 @@ export class RegionhTrackerService {
 
   private parseLastSeen(value: unknown): Date | null {
     if (!value && value !== 0) return null;
+    if (value instanceof Timestamp) return value.toDate();
 
-    // Firestore Timestamp
-    if (value instanceof Timestamp) {
-      return value.toDate();
-    }
-
-    // Plain object that looks like Timestamp
     const maybeTs = value as { seconds?: number; nanoseconds?: number; toDate?: () => Date };
     if (typeof maybeTs?.toDate === 'function') {
-      try {
-        return maybeTs.toDate();
-      } catch {
-        /* ignore */
-      }
+      try { return maybeTs.toDate(); } catch {}
     }
-    if (typeof maybeTs?.seconds === 'number') {
-      return new Date(maybeTs.seconds * 1000);
-    }
+    if (typeof maybeTs?.seconds === 'number') return new Date(maybeTs.seconds * 1000);
 
-    // Number (ms) or numeric string
-    if (typeof value === 'number' && !Number.isNaN(value)) {
-      return new Date(value);
-    }
+    if (typeof value === 'number' && !Number.isNaN(value)) return new Date(value);
     if (typeof value === 'string') {
       const parsed = Number(value);
       if (!Number.isNaN(parsed)) return new Date(parsed);
       const maybeDate = new Date(value);
       if (!Number.isNaN(maybeDate.getTime())) return maybeDate;
     }
-
     return null;
   }
 }

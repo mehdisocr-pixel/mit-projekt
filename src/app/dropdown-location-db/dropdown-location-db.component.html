@@ -9,6 +9,9 @@
     <div *ngIf="router.url !== '/opgavetyper'" (click)="goToOpgavetyper()" class="dropdown-option">Opgavetyper</div>
     <div *ngIf="router.url !== '/geografisk-lokationsdatabase'" (click)="goToGeoWorkbench()" class="dropdown-option">Geografisk lokationsdatabase</div>
     <div *ngIf="router.url !== '/regionh-tracker'" (click)="goToRegionhTracker()" class="dropdown-option">Region H tracker</div>
+    <div *ngIf="router.url !== '/prototypetracker'" (click)="goToPrototypetracker()" class="dropdown-option">Prototypetracker</div>
+    <div *ngIf="router.url !== '/bssid-scans'" (click)="goToBssidScans()" class="dropdown-option">BSSID scans</div>
+    <div *ngIf="router.url !== '/vogndepot-flow'" (click)="goToVogndepotFlow()" class="dropdown-option">Vogndepot flow 3D</div>
     <div (click)="openBulkModal()" class="dropdown-option">Opret flere AP</div>
   </div>
 </div>

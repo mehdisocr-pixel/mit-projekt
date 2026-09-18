@@ -3,9 +3,30 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { getApps, initializeApp, FirebaseApp } from 'firebase/app';
+import { collection, DocumentData, getDocs, getFirestore, QueryDocumentSnapshot, Timestamp } from 'firebase/firestore';
+import { environment } from '../../environments/environment';
 import { DropdownForsideComponent } from '../dropdown-forside/dropdown-forside.component';
 
 const COLUMN_STORAGE_KEY = 'mitprojekt.selectedColumns';
+const STERIL_APP_NAME = 'sterilvognscanner';
+const COLLECTION_NAME = 'opgaver';
+
+type ViewRow = Record<string, string>;
+interface FirestoreOpgave {
+  afsnitNummer?: string;
+  lejeNummer?: string | number;
+  macTekst?: string;
+  vognNummer?: string | number;
+  createdAt?: Timestamp | string;
+  ap?: {
+    bssid?: string;
+    channel?: string | number;
+    channelsAvailable?: string | number;
+    rssi?: string | number;
+    ssid?: string;
+  };
+}
 
 @Component({
   selector: 'app-forside',
@@ -16,7 +37,7 @@ const COLUMN_STORAGE_KEY = 'mitprojekt.selectedColumns';
 })
 export class ForsideComponent {
   Object = Object;
-  data: any[] = [];
+  data: ViewRow[] = [];
   filterText: string = '';
   selectedColumns: string[] = [];
   tableColumns: string[] = [];
@@ -31,6 +52,18 @@ export class ForsideComponent {
 
   stedData: string[] = [];
   opgaveTyper: string[] = []; // <-- hentes fra API!
+  private readonly displayColumns = [
+    'afsnitNummer',
+    'vognNummer',
+    'lejeNummer',
+    'macTekst',
+    'ap.bssid',
+    'ap.ssid',
+    'ap.channel',
+    'ap.channelsAvailable',
+    'ap.rssi',
+    'createdAt',
+  ];
 
   constructor(private http: HttpClient, private router: Router) {
     const storedColumns = localStorage.getItem(COLUMN_STORAGE_KEY);
@@ -39,18 +72,8 @@ export class ForsideComponent {
       catch { this.selectedColumns = []; }
     }
 
-    // Hent hoveddata (opgaver, CSV)
-    this.http.get('https://docs.google.com/spreadsheets/d/e/2PACX-1vQENXQS_JPiQ5C_6d2nAFkECeuFRdb1YQYEa0vz7asljjdZ7CUbPlbpMPIeb4p0Scy6nqokuEPeHAja/pub?gid=0&single=true&output=csv',
-      { responseType: 'text' }
-    ).subscribe(csvData => {
-      this.data = this.csvToArray(csvData);
-      this.updateTableColumns();
-    }, err => {
-      console.error('Kunne ikke hente opgavedata', err);
-      this.data = [];
-      this.updateTableColumns();
-      alert('Kunne ikke hente opgavedata. Prøv igen senere.');
-    });
+    // Hent hoveddata (opgaver) fra Firestore
+    this.hentOpgaverFraFirestore();
 
     // Hent steddata (til destination-feltet i modal)
     this.http.get<any[]>('https://script.google.com/macros/s/AKfycby3shcE6oEhKJCZcakPdttUZoUPjOlhY5E8gJZA_rzbiibOBsCnHDb4IQ1uOjzaQqDf/exec?action=get'
@@ -66,27 +89,78 @@ export class ForsideComponent {
     });
   }
 
-  csvToArray(csv: string): any[] {
-    const lines = csv.split('\n');
-    const headers = lines[0].split(',').map(h => h.trim());
-    return lines.slice(1).filter(line => line.trim().length > 0).map(line => {
-      const values = line.split(',');
-      const obj: any = {};
-      headers.forEach((header, idx) => { obj[header] = values[idx]?.trim(); });
-      return obj;
-    });
+  private async hentOpgaverFraFirestore() {
+    try {
+      const app = this.getSterilApp();
+      const db = getFirestore(app);
+      const snapshot = await getDocs(collection(db, COLLECTION_NAME));
+      this.data = snapshot.docs.map(doc => this.mapFirestoreDoc(doc));
+      this.updateTableColumns();
+    } catch (err) {
+      console.error('Kunne ikke hente opgavedata fra Firestore', err);
+      this.data = [];
+      this.updateTableColumns();
+      alert('Kunne ikke hente opgavedata. Prøv igen senere.');
+    }
+  }
+
+  private getSterilApp(): FirebaseApp {
+    const existing = getApps().find(app => app.name === STERIL_APP_NAME);
+    if (existing) return existing;
+    if (!environment.sterilVognFirebase) {
+      throw new Error('Sterilvogn Firebase config mangler i environment.');
+    }
+    return initializeApp(environment.sterilVognFirebase, STERIL_APP_NAME);
+  }
+
+  private mapFirestoreDoc(doc: QueryDocumentSnapshot<DocumentData>): ViewRow {
+    const data = (doc.data() || {}) as FirestoreOpgave;
+    const ap = data.ap || {};
+    return {
+      afsnitNummer: this.toText(data.afsnitNummer),
+      vognNummer: this.toText(data.vognNummer),
+      lejeNummer: this.toText(data.lejeNummer),
+      macTekst: this.toText(data.macTekst),
+      'ap.bssid': this.toText(ap.bssid),
+      'ap.ssid': this.toText(ap.ssid),
+      'ap.channel': this.toText(ap.channel),
+      'ap.channelsAvailable': this.toText(ap.channelsAvailable),
+      'ap.rssi': this.toText(ap.rssi),
+      createdAt: this.formatTimestamp(data.createdAt),
+    };
+  }
+
+  private toText(value: unknown): string {
+    if (value === undefined || value === null) return '';
+    return String(value);
+  }
+
+  private formatTimestamp(value: Timestamp | string | undefined): string {
+    if (!value) return '';
+    try {
+      if (typeof value === 'string') return value;
+      const date = value.toDate();
+      if (!date) return '';
+      return date.toISOString().substring(0, 16).replace('T', ' ');
+    } catch {
+      return '';
+    }
   }
 
   updateTableColumns() {
-    if (this.data.length > 0) {
-      this.tableColumns = Object.keys(this.data[0]);
-    }
+    this.tableColumns = [...this.displayColumns];
   }
 
   get dataSorted() {
     return [...this.data].sort((a, b) => {
-      return (new Date(b['Oprettelsestid']).getTime() - new Date(a['Oprettelsestid']).getTime());
+      return this.parseDate(b['createdAt']) - this.parseDate(a['createdAt']);
     });
+  }
+
+  private parseDate(value: string): number {
+    const parsed = Date.parse(value);
+    if (Number.isNaN(parsed)) return 0;
+    return parsed;
   }
 
   get filteredData() {
@@ -96,7 +170,8 @@ export class ForsideComponent {
   }
 
   get columnsToShow() {
-    return (this.selectedColumns.length === 0) ? this.tableColumns : this.selectedColumns;
+    const validSelection = this.selectedColumns.filter(col => this.tableColumns.includes(col));
+    return (validSelection.length === 0) ? this.tableColumns : validSelection;
   }
 
   // Navigation og kolonner

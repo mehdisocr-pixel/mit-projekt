@@ -1,0 +1,99 @@
+.flow-editor {
+  padding: 10px;
+  background: #0f1622;
+  border: 1px solid #1f2a3a;
+  border-radius: 8px;
+  color: #e8f0ff;
+  font-size: 14px;
+  display: grid;
+  gap: 8px;
+}
+
+.row {
+  display: grid;
+  gap: 4px;
+}
+
+label {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+input,
+select {
+  background: #182232;
+  border: 1px solid #253144;
+  color: #e8f0ff;
+  border-radius: 6px;
+  padding: 6px;
+}
+
+.coords {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.coord-block {
+  background: #121b28;
+  border: 1px solid #253144;
+  border-radius: 6px;
+  padding: 8px;
+  display: grid;
+  gap: 4px;
+}
+
+.block-title {
+  font-weight: 600;
+  color: #e8f0ff;
+  margin-bottom: 2px;
+}
+
+.coord-row {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  align-items: center;
+  gap: 6px;
+}
+
+.coord-label {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+button {
+  background: #1f2937;
+  color: #e8f0ff;
+  border: 1px solid #283343;
+  border-radius: 6px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #243142;
+}
+
+.capture-row {
+  display: grid;
+  gap: 6px;
+}
+
+.capture-row button {
+  width: 100%;
+  background: #1f2937;
+  color: #e8f0ff;
+  border: 1px solid #283343;
+  border-radius: 6px;
+  padding: 6px 8px;
+  cursor: pointer;
+}
+
+.capture-row button:hover {
+  background: #243142;
+}
+
+.selected-info {
+  font-size: 12px;
+  color: #9ca3af;
+}

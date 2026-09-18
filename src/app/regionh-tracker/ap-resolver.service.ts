@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LocationDbService, LocationDbRecord } from '../location-db/location-db.service';
 import { parseLocationDetails } from '../location-db/location-parser';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 export interface ResolvedLocation {
   apName: string;
@@ -14,9 +15,17 @@ export interface ResolvedLocation {
 @Injectable({ providedIn: 'root' })
 export class ApResolverService {
   private cache = new Map<string, ResolvedLocation>();
+  private cacheVersion$ = new BehaviorSubject<number>(0);
 
   constructor(private locationDbService: LocationDbService) {
     this.bootstrapCache();
+  }
+
+  /**
+   * Emits whenever the AP cache is rebuilt, so consumers can re-run lookups.
+   */
+  get cacheChanges$(): Observable<number> {
+    return this.cacheVersion$.asObservable();
   }
 
   resolveBssid(bssid: string | undefined | null): ResolvedLocation | null {
@@ -27,7 +36,10 @@ export class ApResolverService {
   private bootstrapCache() {
     this.locationDbService.loadAll().subscribe({
       next: rows => this.rebuildCache(rows),
-      error: () => this.cache.clear(),
+      error: () => {
+        this.cache.clear();
+        this.bumpVersion();
+      },
     });
   }
 
@@ -47,5 +59,11 @@ export class ApResolverService {
       });
     });
     this.cache = next;
+    this.bumpVersion();
+  }
+
+  private bumpVersion() {
+    const nextVal = this.cacheVersion$.value + 1;
+    this.cacheVersion$.next(nextVal);
   }
 }

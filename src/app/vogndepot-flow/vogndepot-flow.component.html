@@ -1,0 +1,107 @@
+<div class="flow-shell">
+  <app-dropdown-vogndepot-flow class="menu"></app-dropdown-vogndepot-flow>
+
+  <div class="content">
+    <div
+      class="viewer-wrapper"
+    >
+      <app-viewer-setup (ready)="onViewerReady($event)"></app-viewer-setup>
+      <!-- Peg events til wrapper for input -->
+      <div
+        class="input-layer"
+        (pointerdown)="onPointerDown($event)"
+        (pointermove)="onPointerMove($event)"
+        (pointerup)="onPointerUp($event)"
+        (pointerleave)="onPointerUp($event)"
+      ></div>
+
+      <div
+        *ngIf="selectionBox"
+        class="selection-rect"
+        [ngStyle]="{
+          left: (selectionBox!.min.x < selectionBox!.max.x ? selectionBox!.min.x : selectionBox!.max.x) + 'px',
+          top: (selectionBox!.min.y < selectionBox!.max.y ? selectionBox!.min.y : selectionBox!.max.y) + 'px',
+          width: Math.abs(selectionBox!.max.x - selectionBox!.min.x) + 'px',
+          height: Math.abs(selectionBox!.max.y - selectionBox!.min.y) + 'px'
+        }"
+      ></div>
+
+      <div class="hud">
+        <span class="time-label">{{ timeLabel }}</span>
+        <span class="status" [class.playing]="isPlaying">{{ isPlaying ? 'Afspiller' : 'Pause' }}</span>
+      </div>
+
+      <!-- Dialog til at vælge STAY/DESTROY -->
+      <div *ngIf="showCompletionModal" class="modal-overlay" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.3); z-index:1000; color:black;">
+          <h3 style="margin-top:0;">Vælg handling ved slutdestination</h3>
+          <div style="margin-bottom:10px;">
+            <label style="display:block; font-size:12px; margin-bottom:4px;">Varighed (sekunder)</label>
+            <input type="number" min="1" max="600" [(ngModel)]="moveSeconds" style="width:80px; padding:4px; border:1px solid #ccc; border-radius:4px;" />
+          </div>
+          <div style="display:flex; gap:10px; margin-top:15px;">
+              <button (click)="resumeRouteDrag()">MOVE</button>
+              <button (click)="completeRouteCreation('STAY')">STAY</button>
+              <button (click)="completeRouteCreation('DESTROY')">DESTROY</button>
+              <button (click)="cancelRouteCreation()">Annuller</button>
+          </div>
+      </div>
+    </div>
+
+    <div class="sidebar">
+      <h3>Flow Styring</h3>
+      <div class="flow-controls">
+          <label for="cart-type-select">Vogn Type:</label>
+          <select id="cart-type-select" [(ngModel)]="selectedCartTypeForRoute" style="width:100%; margin-bottom:10px;">
+              <option *ngFor="let type of cartTypesForUi" [value]="type">{{ type }}</option>
+          </select>
+          <button (click)="startRouteCreation()" [disabled]="isCreatingRoute" style="width:100%;">Opret Rute</button>
+          <button (click)="toggleCameraLock()" style="width:100%; margin-top:5px;" [style.background]="isCameraLocked ? '#d97706' : ''">{{ isCameraLocked ? 'Lås Kamera Op 🔓' : 'Lås Kamera 🔒' }}</button>
+          <button *ngIf="isCreatingRoute" (click)="cancelRouteCreation()" style="width:100%; margin-top:5px;">Annuller Rute</button>
+          <p *ngIf="isCreatingRoute" class="route-help-text" style="font-size:0.85em; color:#ccc; margin-top:5px;">Klik i depotet for at sætte startpunkt, træk derefter til slutpunkt og slip.</p>
+      </div>
+
+      <hr style="border-color:#333; margin: 15px 0;">
+
+      <div class="event-list">
+        <h4>Events ({{ flowEvents.length }})</h4>
+        <div *ngFor="let e of flowEvents" class="event-row">
+          <span>{{ e.time }}</span>
+          <span>{{ e.cartType }}</span>
+          <span>{{ e.action }}</span>
+          <span>{{ e.onComplete }}</span>
+        </div>
+      </div>
+
+      <div class="debug">
+        <div *ngIf="statusMessages.length">
+          <h5>Status</h5>
+          <div *ngFor="let m of statusMessages">{{ m }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button type="button" (click)="play()">Play</button>
+    <button type="button" (click)="pause()">Pause</button>
+
+    <app-speed-control
+      [speed]="timerSpeed"
+      (speedChange)="onSpeedChange($event)"
+    ></app-speed-control>
+
+    <div class="slider">
+      <input
+        type="range"
+        min="240"
+        max="1440"
+        step="1"
+        [(ngModel)]="currentMinutes"
+        (input)="seek()"
+      />
+      <div class="ticks">
+        <span *ngFor="let h of [4,6,8,10,12,14,16,18,20,22,24]" [style.left.%]="(h/24)*100">{{ h | number:'2.0' }}:00</span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -15,5 +15,23 @@ export const environment = {
     storageBucket: 'm5onlinestatus.firebasestorage.app',
     messagingSenderId: '51554245336',
     appId: '1:51554245336:web:aea61eeb7c49334094d5ad'
+  },
+  // --- TILFØJET SÅ DET VIRKER I PRODUCTION OGSÅ ---
+  dualTrackerFirebase: {
+    apiKey: 'AIzaSyB0-RF4ew60L5hBBEJay65-pk4uHlDnIWE',
+    authDomain: 'dualtracker-e9102.firebaseapp.com',
+    projectId: 'dualtracker-e9102',
+    storageBucket: 'dualtracker-e9102.firebasestorage.app',
+    messagingSenderId: '457086845006', 
+    appId: '1:457086845006:web:0b211e9e81c3305597831f' 
+  },
+
+  sterilVognFirebase: {
+    apiKey: 'AIzaSyCFDsP7mIhHdteHK7wlYvn8dd49YVVr1FM',
+    authDomain: 'sterilvognscanner.firebaseapp.com',
+    projectId: 'sterilvognscanner',
+    storageBucket: 'sterilvognscanner.firebasestorage.app',
+    messagingSenderId: '628166629994',
+    appId: '1:628166629994:android:d2d32bfaa76bae05fb4813'
   }
 };
