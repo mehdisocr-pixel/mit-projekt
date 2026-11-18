@@ -7,8 +7,12 @@ import {
 } from './regionh-tracker.service';
 import { DropdownRegionhTrackerComponent } from '../dropdown-regionh-tracker/dropdown-regionh-tracker.component';
 import { ApResolverService, ResolvedLocation } from './ap-resolver.service';
+import { regionhTrackerDisplayNames } from './regionh-device-label';
 
-type RegionhDeviceWithResolved = RegionhDeviceState & { resolved: ResolvedLocation | null };
+type RegionhDeviceWithResolved = RegionhDeviceState & {
+  displayName: string;
+  resolved: ResolvedLocation | null;
+};
 
 @Component({
   selector: 'app-regionh-tracker',
@@ -25,12 +29,14 @@ export class RegionhTrackerComponent {
     private apResolver: ApResolverService,
   ) {
     this.devices$ = this.regionhTrackerService.getDevices().pipe(
-      map(devices =>
-        devices.map(device => ({
+      map(devices => {
+        const displayNames = regionhTrackerDisplayNames(devices);
+        return devices.map(device => ({
           ...device,
+          displayName: displayNames.get(device.id) ?? (device.name?.trim() || device.id),
           resolved: this.apResolver.resolveBssid((device as any).bssid ?? (device as any).macAddress),
-        })),
-      ),
+        }));
+      }),
     );
   }
 
