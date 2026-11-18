@@ -3,7 +3,7 @@
 <div class="regionh-root">
   <div class="regionh-grid" *ngIf="devices$ | async as devices; else loading">
     <div class="regionh-card" *ngFor="let device of devices">
-      <h2>{{ device.name || device.id }}</h2>
+      <h2>{{ device.displayName }}</h2>
       <p><span class="label">Online:</span> <span [class.ok]="device.online === true" [class.warn]="device.online === false">{{ formatOnline(device.online) }}</span></p>
       <p><span class="label">Senest set:</span> {{ formatLastSeen(device.lastSeen) }}</p>
       <p><span class="label">IP:</span> {{ formatIp(device.ip) }}</p>
